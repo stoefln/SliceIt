@@ -1,0 +1,8 @@
+*.class
+.DS_Store
+bin/
+*.apk
+*.classpath
+CutoutCamPro/gen/
+CutoutCamLib/gen/
+CutoutCamBasic/gen/
