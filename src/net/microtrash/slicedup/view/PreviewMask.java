@@ -4,15 +4,13 @@ import net.microtrash.slicedup.R;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
+import android.widget.RelativeLayout;
 
-public class PreviewMask extends ViewGroup {
-	private LinearLayout bottomView;
+public class PreviewMask extends RelativeLayout {
+	private RelativeLayout bottomView;
 	private View topView;
 	private double ratio = 16d / 9d;
 
@@ -32,18 +30,12 @@ public class PreviewMask extends ViewGroup {
 	}
 
 	private void init(Context context) {
-		
-		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		topView = inflater.inflate(R.layout.top_view, null, false);
-		
-		//topView = new LinearLayout(context);
-		//topView.setBackgroundColor(getResources().getColor(R.color.gui_main_color));
-		
-		LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT); 
-		
-				 
-		addView(topView, params);
-		
+
+		// topView = findViewById
+
+		// topView = new LinearLayout(context);
+		// topView.setBackgroundColor(getResources().getColor(R.color.gui_main_color));
+
 		// topView.setBackgroundColor(getResources().getColor(R.color.test_color));
 
 		// topView.addView(scrollView, LayoutParams.MATCH_PARENT,
@@ -55,23 +47,41 @@ public class PreviewMask extends ViewGroup {
 		 * LayoutParams.WRAP_CONTENT); test.setLayoutParams(params);
 		 * topView.addView(test);
 		 */
-		bottomView = new LinearLayout(context);
-		bottomView.setBackgroundColor(getResources().getColor(R.color.gui_main_color));
-		addView(bottomView);
+		topView = findViewById(R.id.mask_top);
+		bottomView = (RelativeLayout) findViewById(R.id.mask_bottom);
 	}
 
 	@Override
-	protected void onLayout(boolean changed, int l, int t, int r, int b) {
+	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+		int width = MeasureSpec.getSize(widthMeasureSpec);
+		int height = MeasureSpec.getSize(heightMeasureSpec);
 
-		double maskHeight = (double) getWidth() / getRatio();
+		topView = findViewById(R.id.mask_top);
+		bottomView = (RelativeLayout) findViewById(R.id.mask_bottom);
 
-		int coverHeight = (int) ((getHeight() - maskHeight) / 2);
+		double maskHeight = (double) width / getRatio();
 
-		topView.layout(0, 0, getWidth(), coverHeight);
-		
-		bottomView.layout(0, (int) (coverHeight + maskHeight), getWidth(), getHeight());
+		int coverHeight = (int) ((height - maskHeight) / 2);
+
+		topView.getLayoutParams().height = coverHeight;
+		bottomView.getLayoutParams().height = coverHeight;
+
 	}
 
+	/*
+	 * @Override protected void onLayout(boolean changed, int l, int t, int r,
+	 * int b) {
+	 * 
+	 * double maskHeight = (double) getWidth() / getRatio();
+	 * 
+	 * int coverHeight = (int) ((getHeight() - maskHeight) / 2);
+	 * 
+	 * topView.layout(0, 0, getWidth(), coverHeight);
+	 * 
+	 * bottomView.layout(0, (int) (coverHeight + maskHeight), getWidth(),
+	 * getHeight()); }
+	 */
 	public double getRatio() {
 		return ratio;
 	}
@@ -81,10 +91,11 @@ public class PreviewMask extends ViewGroup {
 	}
 
 	public void addPreImage(Bitmap bitmap) {
-		ImageView image = new ImageView(getContext());
+		ProportionalBitmapView image = new ProportionalBitmapView(getContext());
 		image.setImageBitmap(bitmap);
-		LayoutParams params = new LinearLayout.LayoutParams(bitmap.getWidth(), bitmap.getHeight());
-		image.setLayoutParams(params);
+
+		LinearLayout imageContainer = (LinearLayout) findViewById(R.id.image_container);
+		imageContainer.addView(image, new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 		// topView.addView(image);
 		// scrollView.invalidate();
 
