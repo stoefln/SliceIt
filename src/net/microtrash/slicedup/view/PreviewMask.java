@@ -11,7 +11,7 @@ import android.widget.RelativeLayout;
 
 public class PreviewMask extends RelativeLayout {
 	private RelativeLayout bottomView;
-	private View topView;
+	private RelativeLayout topView;
 	private double ratio = 16d / 9d;
 
 	public PreviewMask(Context context) {
@@ -47,7 +47,7 @@ public class PreviewMask extends RelativeLayout {
 		 * LayoutParams.WRAP_CONTENT); test.setLayoutParams(params);
 		 * topView.addView(test);
 		 */
-		topView = findViewById(R.id.mask_top);
+		topView = (RelativeLayout) findViewById(R.id.mask_top);
 		bottomView = (RelativeLayout) findViewById(R.id.mask_bottom);
 	}
 
@@ -57,15 +57,15 @@ public class PreviewMask extends RelativeLayout {
 		int width = MeasureSpec.getSize(widthMeasureSpec);
 		int height = MeasureSpec.getSize(heightMeasureSpec);
 
-		topView = findViewById(R.id.mask_top);
+		topView = (RelativeLayout) findViewById(R.id.mask_top);
 		bottomView = (RelativeLayout) findViewById(R.id.mask_bottom);
 
 		double maskHeight = (double) width / getRatio();
 
-		int coverHeight = (int) ((height - maskHeight) / 2);
+		//int coverHeight = (int) ((height - maskHeight) / 2);
 
-		topView.getLayoutParams().height = coverHeight;
-		bottomView.getLayoutParams().height = coverHeight;
+		topView.getLayoutParams().height = (int) maskHeight;
+		bottomView.getLayoutParams().height = (int) (height - 2 * maskHeight);
 
 	}
 
@@ -94,8 +94,11 @@ public class PreviewMask extends RelativeLayout {
 		ProportionalBitmapView image = new ProportionalBitmapView(getContext());
 		image.setImageBitmap(bitmap);
 
-		LinearLayout imageContainer = (LinearLayout) findViewById(R.id.image_container);
-		imageContainer.addView(image, new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+		topView = (RelativeLayout) findViewById(R.id.mask_top);
+		topView.addView(image);
+		/*
+		imageContainer.addView(image, new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));*/
+		
 		// topView.addView(image);
 		// scrollView.invalidate();
 

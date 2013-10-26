@@ -21,19 +21,7 @@
             android:layout_height="match_parent"
             android:background="@color/gui_main_color" >
 
-            <ScrollView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_alignParentBottom="true" >
-
-                <LinearLayout
-                    android:id="@+id/image_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="#77550099"
-                    android:orientation="vertical" >
-                </LinearLayout>
-            </ScrollView>
+     
         </RelativeLayout>
 
         <RelativeLayout

@@ -1,20 +1,24 @@
 package net.microtrash.slicedup;
 
+import java.io.File;
+import java.util.ArrayList;
+
 import net.microtrash.slicedup.BitmapDecodingTask.BitmapDecodingListener;
 import net.microtrash.slicedup.ImageSaver.OnImageSavedListener;
+import net.microtrash.slicedup.lib.ImageEffects;
 import net.microtrash.slicedup.view.PreviewMask;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
-
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -49,6 +53,8 @@ public class MainActivity extends Activity implements BitmapDecodingListener, On
 
 	private double ratio = 16d / 9d;
 
+	private ArrayList<String> imageFilenames;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -78,7 +84,7 @@ public class MainActivity extends Activity implements BitmapDecodingListener, On
 		SharedPreferences.Editor editor = preferences.edit();
 		editor.putInt("session_num", sessionNumber);
 		editor.commit();
-		shotNumber = 1;
+		shotNumber = 0;
 
 		shootButton = (Button) findViewById(R.id.bt_shoot);
 		shootButton.setOnClickListener(new OnClickListener() {
@@ -102,9 +108,16 @@ public class MainActivity extends Activity implements BitmapDecodingListener, On
 		cameraController = new CameraController(this, 16d / 9d, cameraView);
 		imageSaver = new ImageSaver(this, this);
 		shutterLayer = findViewById(R.id.shutter_layer);
+		imageFilenames = new ArrayList<String>();
 
 	}
 
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		finish();
+	}
+	
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
@@ -139,26 +152,52 @@ public class MainActivity extends Activity implements BitmapDecodingListener, On
 		c.drawColor(getResources().getColor(R.color.test_color));
 		
 		c.drawBitmap(bitmap, m, new Paint(Paint.ANTI_ALIAS_FLAG));
-		imageSaver.saveImageAsync(slicedBitmap, "sliceUp_" + shotNumber);
+		//imageSaver.saveImageAsync(slicedBitmap, "slice_L_" + shotNumber);
 		
 		
 		double downScaling = 5;
 		double visibleOfSlice = 0.1;
+		Bitmap miniSlice = Bitmap.createBitmap((int) ((double) sliceWidth / downScaling), (int)((double) sliceHeight / downScaling ), Bitmap.Config.ARGB_8888);
+		c = new Canvas(miniSlice);
+		m = new Matrix();
 		
+		m.postScale((float) (1d/downScaling), (float) (1d/downScaling));
+		c.drawBitmap(slicedBitmap, m, new Paint(Paint.ANTI_ALIAS_FLAG));
+		imageSaver.saveImageAsync(miniSlice, "slice_S_" + shotNumber);
+		
+		/*
 		Bitmap miniSlice = Bitmap.createBitmap((int) ((double) sliceWidth / downScaling), (int)((double) sliceHeight * visibleOfSlice / downScaling ), Bitmap.Config.ARGB_8888);
 		c = new Canvas(miniSlice);
 		m = new Matrix();
 		m.postTranslate(0, -(float) (sliceHeight*(1-visibleOfSlice)));
 		m.postScale((float) (1d/downScaling), (float) (1d/downScaling));
 		c.drawBitmap(slicedBitmap, m, new Paint(Paint.ANTI_ALIAS_FLAG));
-		imageSaver.saveImageAsync(miniSlice, "sliceUp_" + shotNumber+"_mini");
-		mask.addPreImage(miniSlice);
-		shotNumber++;
+		imageSaver.saveImageAsync(miniSlice, "sliceUp_" + shotNumber+"_mini");*/
+		Bitmap blurredSlice = ImageEffects.fastblur(miniSlice, 100, miniSlice.getWidth(), (int) (miniSlice.getHeight() * (1d - visibleOfSlice)));
+		mask.addPreImage(blurredSlice);
+		
 	}
+
+	
 
 	@Override
 	public void onImageSaved(String filepath) {
-
+		if(filepath.contains("slice_S_")){
+			imageFilenames.add(filepath);
+			shotNumber++;
+			Log.v(TAG, "shotNumber: "+shotNumber);
+			if(imageFilenames.size() >= 4){
+				Bitmap composition = ImageEffects.createComposition(this, imageFilenames);
+				imageSaver.saveImageAsync(composition, "composition_" + shotNumber);
+				imageFilenames = new ArrayList<String>();
+			}
+		} else if(filepath.contains("composition_")){
+			Intent intent = new Intent();
+			intent.setAction(android.content.Intent.ACTION_VIEW);
+			intent.setDataAndType(Uri.fromFile(new File(filepath)), "image/png");
+			startActivity(intent);
+		}
+		
 	}
 
 }
