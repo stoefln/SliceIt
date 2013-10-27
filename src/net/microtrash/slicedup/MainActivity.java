@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import net.microtrash.slicedup.BitmapDecodingTask.BitmapDecodingListener;
 import net.microtrash.slicedup.ImageSaver.OnImageSavedListener;
 import net.microtrash.slicedup.lib.ImageEffects;
+import net.microtrash.slicedup.view.IconButton;
 import net.microtrash.slicedup.view.PreviewMask;
 import android.app.Activity;
 import android.content.Intent;
@@ -39,9 +40,9 @@ public class MainActivity extends Activity implements BitmapDecodingListener, On
 
 	private int shotNumber;
 
-	private Button shootButton;
+	private IconButton shootButton;
 
-	private ImageSaver imageSaver;
+	private ImageSaver imageSaver, compositionSaver;
 
 	private View shutterLayer;
 
@@ -86,7 +87,7 @@ public class MainActivity extends Activity implements BitmapDecodingListener, On
 		editor.commit();
 		shotNumber = 0;
 
-		shootButton = (Button) findViewById(R.id.bt_shoot);
+		shootButton = (IconButton) findViewById(R.id.bt_shoot);
 		shootButton.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -107,6 +108,7 @@ public class MainActivity extends Activity implements BitmapDecodingListener, On
 		});
 		cameraController = new CameraController(this, 16d / 9d, cameraView);
 		imageSaver = new ImageSaver(this, this);
+		compositionSaver = new ImageSaver(this, this);
 		shutterLayer = findViewById(R.id.shutter_layer);
 		imageFilenames = new ArrayList<String>();
 
@@ -156,7 +158,7 @@ public class MainActivity extends Activity implements BitmapDecodingListener, On
 		
 		
 		double downScaling = 5;
-		double visibleOfSlice = 0.1;
+		double visibleOfSlice = 0.2;
 		Bitmap miniSlice = Bitmap.createBitmap((int) ((double) sliceWidth / downScaling), (int)((double) sliceHeight / downScaling ), Bitmap.Config.ARGB_8888);
 		c = new Canvas(miniSlice);
 		m = new Matrix();
@@ -185,11 +187,13 @@ public class MainActivity extends Activity implements BitmapDecodingListener, On
 		if(filepath.contains("slice_S_")){
 			imageFilenames.add(filepath);
 			shotNumber++;
+			mask.setStep(shotNumber);
 			Log.v(TAG, "shotNumber: "+shotNumber);
 			if(imageFilenames.size() >= 4){
 				Bitmap composition = ImageEffects.createComposition(this, imageFilenames);
 				imageSaver.saveImageAsync(composition, "composition_" + shotNumber);
 				imageFilenames = new ArrayList<String>();
+				
 			}
 		} else if(filepath.contains("composition_")){
 			Intent intent = new Intent();

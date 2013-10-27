@@ -9,6 +9,41 @@ package net.microtrash.slicedup;
 
 public final class R {
     public static final class attr {
+        /** <p>Must be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
+"<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int circleColor=0x7f010001;
+        /** <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int circleRadius=0x7f010000;
+        /** <p>May be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+<p>May be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>May be an integer value, such as "<code>100</code>".
+<p>May be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>May be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
+"<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
+<p>May be a floating point value, such as "<code>1.2</code>".
+<p>May be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>May be a fractional value, which is a floating point number appended with either % or %p, such as "<code>14.5%</code>".
+The % suffix always means a percentage of the base size; the optional %p suffix provides a size relative to
+some parent container.
+         */
+        public static final int icon=0x7f010002;
     }
     public static final class color {
         public static final int gui_main_color=0x7f040000;
@@ -25,16 +60,19 @@ public final class R {
         public static final int activity_vertical_margin=0x7f050001;
     }
     public static final class drawable {
-        public static final int ic_launcher=0x7f020000;
+        public static final int camera=0x7f020000;
+        public static final int figure=0x7f020001;
+        public static final int ic_launcher=0x7f020002;
     }
     public static final class id {
-        public static final int action_settings=0x7f090006;
-        public static final int bt_shoot=0x7f090005;
+        public static final int action_settings=0x7f090007;
+        public static final int bt_shoot=0x7f090006;
         public static final int mask=0x7f090001;
         public static final int mask_bottom=0x7f090003;
         public static final int mask_top=0x7f090002;
+        public static final int outline=0x7f090004;
         public static final int preview=0x7f090000;
-        public static final int shutter_layer=0x7f090004;
+        public static final int shutter_layer=0x7f090005;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
@@ -75,4 +113,84 @@ public final class R {
          */
         public static final int AppTheme=0x7f070001;
     }
+    public static final class styleable {
+        /** Attributes that can be used with a IconButton.
+           <p>Includes the following attributes:</p>
+           <table>
+           <colgroup align="left" />
+           <colgroup align="left" />
+           <tr><th>Attribute</th><th>Description</th></tr>
+           <tr><td><code>{@link #IconButton_android_textColor android:textColor}</code></td><td></td></tr>
+           <tr><td><code>{@link #IconButton_circleColor net.microtrash.slicedup:circleColor}</code></td><td></td></tr>
+           <tr><td><code>{@link #IconButton_circleRadius net.microtrash.slicedup:circleRadius}</code></td><td></td></tr>
+           <tr><td><code>{@link #IconButton_icon net.microtrash.slicedup:icon}</code></td><td></td></tr>
+           </table>
+           @see #IconButton_android_textColor
+           @see #IconButton_circleColor
+           @see #IconButton_circleRadius
+           @see #IconButton_icon
+         */
+        public static final int[] IconButton = {
+            0x01010098, 0x7f010000, 0x7f010001, 0x7f010002
+        };
+        /**
+          <p>This symbol is the offset where the {@link android.R.attr#textColor}
+          attribute's value can be found in the {@link #IconButton} array.
+          @attr name android:textColor
+        */
+        public static final int IconButton_android_textColor = 0;
+        /**
+          <p>This symbol is the offset where the {@link net.microtrash.slicedup.R.attr#circleColor}
+          attribute's value can be found in the {@link #IconButton} array.
+
+
+          <p>Must be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
+"<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name net.microtrash.slicedup:circleColor
+        */
+        public static final int IconButton_circleColor = 2;
+        /**
+          <p>This symbol is the offset where the {@link net.microtrash.slicedup.R.attr#circleRadius}
+          attribute's value can be found in the {@link #IconButton} array.
+
+
+          <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name net.microtrash.slicedup:circleRadius
+        */
+        public static final int IconButton_circleRadius = 1;
+        /**
+          <p>This symbol is the offset where the {@link net.microtrash.slicedup.R.attr#icon}
+          attribute's value can be found in the {@link #IconButton} array.
+
+
+          <p>May be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+<p>May be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>May be an integer value, such as "<code>100</code>".
+<p>May be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>May be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
+"<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
+<p>May be a floating point value, such as "<code>1.2</code>".
+<p>May be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>May be a fractional value, which is a floating point number appended with either % or %p, such as "<code>14.5%</code>".
+The % suffix always means a percentage of the base size; the optional %p suffix provides a size relative to
+some parent container.
+          @attr name net.microtrash.slicedup:icon
+        */
+        public static final int IconButton_icon = 3;
+    };
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="gui_main_color">#333333</color>
+    <color name="gui_main_color">#222222</color>
     <color name="test_color">#FF00FF</color>
 
 </resources>
