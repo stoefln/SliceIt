@@ -4,9 +4,7 @@ import net.microtrash.slicedup.R;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 public class PreviewMask extends RelativeLayout {
@@ -34,22 +32,6 @@ public class PreviewMask extends RelativeLayout {
 
 	private void init(Context context) {
 
-		// topView = findViewById
-
-		// topView = new LinearLayout(context);
-		// topView.setBackgroundColor(getResources().getColor(R.color.gui_main_color));
-
-		// topView.setBackgroundColor(getResources().getColor(R.color.test_color));
-
-		// topView.addView(scrollView, LayoutParams.MATCH_PARENT,
-		// LayoutParams.MATCH_PARENT);
-		// addView(topView);
-		/*
-		 * TextView test = new TextView(getContext()); test.setText("xxxxxxx");
-		 * params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
-		 * LayoutParams.WRAP_CONTENT); test.setLayoutParams(params);
-		 * topView.addView(test);
-		 */
 		topView = (RelativeLayout) findViewById(R.id.mask_top);
 		bottomView = (RelativeLayout) findViewById(R.id.mask_bottom);
 	}
@@ -85,19 +67,6 @@ public class PreviewMask extends RelativeLayout {
 		outline.setLayoutParams(params);
 	}
 
-	/*
-	 * @Override protected void onLayout(boolean changed, int l, int t, int r,
-	 * int b) {
-	 * 
-	 * double maskHeight = (double) getWidth() / getRatio();
-	 * 
-	 * int coverHeight = (int) ((getHeight() - maskHeight) / 2);
-	 * 
-	 * topView.layout(0, 0, getWidth(), coverHeight);
-	 * 
-	 * bottomView.layout(0, (int) (coverHeight + maskHeight), getWidth(),
-	 * getHeight()); }
-	 */
 	public double getRatio() {
 		return ratio;
 	}
@@ -112,16 +81,7 @@ public class PreviewMask extends RelativeLayout {
 
 		topView = (RelativeLayout) findViewById(R.id.mask_top);
 		topView.addView(image);
-		/*
-		 * imageContainer.addView(image, new
-		 * LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,
-		 * LayoutParams.WRAP_CONTENT));
-		 */
 
-		// topView.addView(image);
-		// scrollView.invalidate();
-
-		// topView.addView(test);
 	}
 
 	public int getStep() {

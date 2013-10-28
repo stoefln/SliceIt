@@ -165,7 +165,7 @@ public class MainActivity extends Activity implements BitmapDecodingListener, On
 		
 		m.postScale((float) (1d/downScaling), (float) (1d/downScaling));
 		c.drawBitmap(slicedBitmap, m, new Paint(Paint.ANTI_ALIAS_FLAG));
-		imageSaver.saveImageAsync(miniSlice, "slice_S_" + shotNumber);
+		imageSaver.saveImageAsync(miniSlice, "slices", "slice_S_" + shotNumber);
 		
 		/*
 		Bitmap miniSlice = Bitmap.createBitmap((int) ((double) sliceWidth / downScaling), (int)((double) sliceHeight * visibleOfSlice / downScaling ), Bitmap.Config.ARGB_8888);
@@ -191,7 +191,7 @@ public class MainActivity extends Activity implements BitmapDecodingListener, On
 			Log.v(TAG, "shotNumber: "+shotNumber);
 			if(imageFilenames.size() >= 4){
 				Bitmap composition = ImageEffects.createComposition(this, imageFilenames);
-				imageSaver.saveImageAsync(composition, "composition_" + shotNumber);
+				imageSaver.saveImageAsync(composition, "compositions", "composition_" + shotNumber);
 				imageFilenames = new ArrayList<String>();
 				
 			}

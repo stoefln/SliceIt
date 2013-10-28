@@ -30,7 +30,6 @@ public class ImageSaver {
 	private int imageQuality = 90;
 	private String defaultImageFormat = "JPEG";
 
-	private String lastCompositionPath;
 	private OnImageSavedListener listener;
 	private String imageBaseName;
 	private static final String TAG = "ImageSaver";
@@ -54,16 +53,24 @@ public class ImageSaver {
 	public ImageSaver(Activity context, OnImageSavedListener listener) {
 		this.context = context;
 		this.listener = listener;
-		this.lastCompositionPath = "";
+
 	}
 
-	public void saveImageAsync(Bitmap bitmap, String imageBaseName) {
+	public void saveImageAsync(Bitmap bitmap, String directoryName, String imageBaseName) {
 		this.imageBaseName = imageBaseName;
-		SaveCompositionTask saveImageTask = new SaveCompositionTask();
+		SaveCompositionTask saveImageTask = new SaveCompositionTask(directoryName);
 		saveImageTask.execute(bitmap);
+
 	}
 
 	private class SaveCompositionTask extends AsyncTask<Object, Integer, Long> {
+
+		private String lastCompositionPath;
+		private String directoryName;
+
+		public SaveCompositionTask(String directoryName) {
+			this.directoryName = directoryName;
+		}
 
 		protected void onProgressUpdate(Integer... progress) {
 		}
@@ -74,8 +81,7 @@ public class ImageSaver {
 			long currentTime = System.currentTimeMillis();
 			String imageFilename = imageBaseName + "_" + currentTime + ".jpg";
 
-			lastCompositionPath = saveImage(imageFilename, image, false);
-
+			lastCompositionPath = saveImage(directoryName, imageFilename, image, false);
 			return null;
 		}
 
@@ -87,10 +93,10 @@ public class ImageSaver {
 		}
 	}
 
-	private String saveImage(String filename, Bitmap image, boolean hasTransparency) {
+	private String saveImage(String directoryName, String filename, Bitmap image, boolean hasTransparency) {
 
 		try {
-			String dir = Globals.getAppRootDirectoryPath() + "/photos/";
+			String dir = Globals.getAppRootDirectoryPath() + "/" + directoryName + "/";
 			File directory = new File(dir);
 			directory.mkdirs();
 			File noMedia = new File(dir + ".nomedia"); // don't know why, but
@@ -131,19 +137,19 @@ public class ImageSaver {
 				return saveUri.toString();
 			} else {
 
-				this.lastCompositionPath = String.format(dir + filename, System.currentTimeMillis());
-				stream = new FileOutputStream(this.lastCompositionPath);
+				String filePath = String.format(dir + filename, System.currentTimeMillis());
+				stream = new FileOutputStream(filePath);
 				processedImage.compress(CompressFormat.JPEG, this.imageQuality, stream);
 
-				Log.v(TAG, "image saved to " + lastCompositionPath);
+				Log.v(TAG, "image saved to " + filePath);
 				stream.flush();
 				stream.close();
 
 				processedImage.recycle();
 				processedImage = null;
 				// TODO: move the filescanner into its own service / thread
-				new SingleFileScanner(context, this.lastCompositionPath);
-				return lastCompositionPath;
+				new SingleFileScanner(context, filePath);
+				return filePath;
 			}
 
 		} catch (FileNotFoundException e) {
@@ -154,8 +160,5 @@ public class ImageSaver {
 		return "";
 	}
 
-	public String getLastCompositionPath() {
-		return this.lastCompositionPath;
-	}
 
 }
