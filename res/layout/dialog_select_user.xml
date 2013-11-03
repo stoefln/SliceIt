@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#333"
+    android:orientation="vertical"
+    android:paddingBottom="40dp"
+    android:paddingLeft="24dp"
+    android:paddingRight="24dp"
+    android:paddingTop="22dp" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#333"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/dialog_title"
+            style="@style/Text.Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Upload fertig!" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/sep_thick"
+            android:layout_marginTop="10dp"
+            android:background="@color/sep_thick" />
+
+        <TextView
+            android:id="@+id/dialog_message"
+            style="@style/Text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:layout_marginTop="25dp"
+            android:layout_marginBottom="25dp"
+            android:text="An wen willst du dein Bild senden?" />
+
+        <ListView
+            android:id="@+id/dialog_send_to_lv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+             >
+        </ListView>
+    </LinearLayout>
+
+</RelativeLayout>

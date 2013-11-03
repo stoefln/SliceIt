@@ -1,10 +1,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res/net.microtrash.slicedup"
+    xmlns:app="http://schemas.android.com/apk/lib/net.microtrash.slicedup"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000000"
-    tools:context=".MainActivity" >
+    tools:context=".CameraActivity" >
 
     <SurfaceView
         android:id="@+id/preview"
@@ -36,8 +36,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:alpha="0.5"
-            android:src="@drawable/figure"
-            android:contentDescription="@null" />
+            android:contentDescription="@null"
+            android:src="@drawable/figure" />
     </net.microtrash.slicedup.view.PreviewMask>
 
     <View
@@ -55,7 +55,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="-10dp"
         app:circleColor="#113847"
-        app:circleRadius="40dp"
+        app:circleRadius="50dp"
         app:icon="@drawable/camera" />
 
 </RelativeLayout>

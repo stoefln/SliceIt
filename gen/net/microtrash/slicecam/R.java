@@ -5,9 +5,13 @@
  * should not be modified by hand.
  */
 
-package net.microtrash.slicedup;
+package net.microtrash.slicecam;
 
 public final class R {
+    public static final class anim {
+        public static final int rotate=0x7f040000;
+        public static final int rotate_90=0x7f040001;
+    }
     public static final class attr {
         /** <p>Must be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
 "<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
@@ -46,8 +50,11 @@ some parent container.
         public static final int icon=0x7f010002;
     }
     public static final class color {
-        public static final int gui_main_color=0x7f040000;
-        public static final int test_color=0x7f040001;
+        public static final int dialog_background=0x7f050003;
+        public static final int gui_main_color=0x7f050000;
+        public static final int sep_thick=0x7f050002;
+        public static final int sep_thin=0x7f050004;
+        public static final int test_color=0x7f050001;
     }
     public static final class dimen {
         /**  Default screen margins, per the Android Design guidelines. 
@@ -56,34 +63,63 @@ some parent container.
          screen margins) for sw720dp devices (e.g. 10" tablets) in landscape here.
     
          */
-        public static final int activity_horizontal_margin=0x7f050000;
-        public static final int activity_vertical_margin=0x7f050001;
+        public static final int activity_horizontal_margin=0x7f060000;
+        public static final int activity_vertical_margin=0x7f060001;
+        public static final int content_space=0x7f060002;
+        public static final int dialog_standard_width=0x7f060004;
+        public static final int sep_thick=0x7f060003;
+        public static final int sep_thin=0x7f060005;
     }
     public static final class drawable {
         public static final int camera=0x7f020000;
-        public static final int figure=0x7f020001;
-        public static final int ic_launcher=0x7f020002;
+        public static final int debut_dark=0x7f020001;
+        public static final int figure=0x7f020002;
+        public static final int ic_launcher=0x7f020003;
+        public static final int spinner=0x7f020004;
     }
     public static final class id {
-        public static final int action_settings=0x7f090007;
-        public static final int bt_shoot=0x7f090006;
-        public static final int mask=0x7f090001;
-        public static final int mask_bottom=0x7f090003;
-        public static final int mask_top=0x7f090002;
-        public static final int outline=0x7f090004;
-        public static final int preview=0x7f090000;
-        public static final int shutter_layer=0x7f090005;
+        public static final int action_settings=0x7f070018;
+        public static final int activity_dashboard_btn_new=0x7f070002;
+        public static final int activity_dashboard_lv_requests=0x7f070001;
+        public static final int bRegister=0x7f07000f;
+        public static final int bt_shoot=0x7f070009;
+        public static final int dialog_message=0x7f070012;
+        public static final int dialog_send_to_lv=0x7f070013;
+        public static final int dialog_title=0x7f070011;
+        public static final int header=0x7f07000a;
+        public static final int item_composition_slice=0x7f070015;
+        public static final int item_composition_username=0x7f070014;
+        public static final int item_user_username=0x7f070016;
+        public static final int link_to_login=0x7f070010;
+        public static final int mask=0x7f070004;
+        public static final int mask_bottom=0x7f070006;
+        public static final int mask_top=0x7f070005;
+        public static final int outline=0x7f070007;
+        public static final int popup_progressbar_iv=0x7f070017;
+        public static final int preview=0x7f070003;
+        public static final int shutter_layer=0x7f070008;
+        public static final int tag_user=0x7f070000;
+        public static final int tbEmail=0x7f07000c;
+        public static final int tbPassword=0x7f07000d;
+        public static final int tbUsername=0x7f07000b;
+        public static final int tvError=0x7f07000e;
     }
     public static final class layout {
-        public static final int activity_main=0x7f030000;
+        public static final int activity_dashboard=0x7f030000;
+        public static final int activity_main=0x7f030001;
+        public static final int activity_register=0x7f030002;
+        public static final int dialog_select_user=0x7f030003;
+        public static final int item_composition=0x7f030004;
+        public static final int item_user=0x7f030005;
+        public static final int popup_progressbar=0x7f030006;
     }
     public static final class menu {
-        public static final int main=0x7f080000;
+        public static final int main=0x7f0a0000;
     }
     public static final class string {
-        public static final int action_settings=0x7f060001;
-        public static final int app_name=0x7f060000;
-        public static final int hello_world=0x7f060002;
+        public static final int action_settings=0x7f080001;
+        public static final int app_name=0x7f080000;
+        public static final int hello_world=0x7f080002;
     }
     public static final class style {
         /** 
@@ -107,11 +143,14 @@ some parent container.
     
  API 14 theme customizations can go here. 
          */
-        public static final int AppBaseTheme=0x7f070000;
+        public static final int AppBaseTheme=0x7f090000;
         /**  Application theme. 
  All customizations that are NOT specific to a particular API-level can go here. 
          */
-        public static final int AppTheme=0x7f070001;
+        public static final int AppTheme=0x7f090001;
+        public static final int ColorButton=0x7f090004;
+        public static final int Text=0x7f090002;
+        public static final int Text_Title=0x7f090003;
     }
     public static final class styleable {
         /** Attributes that can be used with a IconButton.
@@ -121,9 +160,9 @@ some parent container.
            <colgroup align="left" />
            <tr><th>Attribute</th><th>Description</th></tr>
            <tr><td><code>{@link #IconButton_android_textColor android:textColor}</code></td><td></td></tr>
-           <tr><td><code>{@link #IconButton_circleColor net.microtrash.slicedup:circleColor}</code></td><td></td></tr>
-           <tr><td><code>{@link #IconButton_circleRadius net.microtrash.slicedup:circleRadius}</code></td><td></td></tr>
-           <tr><td><code>{@link #IconButton_icon net.microtrash.slicedup:icon}</code></td><td></td></tr>
+           <tr><td><code>{@link #IconButton_circleColor net.microtrash.slicecam:circleColor}</code></td><td></td></tr>
+           <tr><td><code>{@link #IconButton_circleRadius net.microtrash.slicecam:circleRadius}</code></td><td></td></tr>
+           <tr><td><code>{@link #IconButton_icon net.microtrash.slicecam:icon}</code></td><td></td></tr>
            </table>
            @see #IconButton_android_textColor
            @see #IconButton_circleColor
@@ -140,7 +179,7 @@ some parent container.
         */
         public static final int IconButton_android_textColor = 0;
         /**
-          <p>This symbol is the offset where the {@link net.microtrash.slicedup.R.attr#circleColor}
+          <p>This symbol is the offset where the {@link net.microtrash.slicecam.R.attr#circleColor}
           attribute's value can be found in the {@link #IconButton} array.
 
 
@@ -151,11 +190,11 @@ some parent container.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name net.microtrash.slicedup:circleColor
+          @attr name net.microtrash.slicecam:circleColor
         */
         public static final int IconButton_circleColor = 2;
         /**
-          <p>This symbol is the offset where the {@link net.microtrash.slicedup.R.attr#circleRadius}
+          <p>This symbol is the offset where the {@link net.microtrash.slicecam.R.attr#circleRadius}
           attribute's value can be found in the {@link #IconButton} array.
 
 
@@ -167,11 +206,11 @@ in (inches), mm (millimeters).
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name net.microtrash.slicedup:circleRadius
+          @attr name net.microtrash.slicecam:circleRadius
         */
         public static final int IconButton_circleRadius = 1;
         /**
-          <p>This symbol is the offset where the {@link net.microtrash.slicedup.R.attr#icon}
+          <p>This symbol is the offset where the {@link net.microtrash.slicecam.R.attr#icon}
           attribute's value can be found in the {@link #IconButton} array.
 
 
@@ -189,7 +228,7 @@ in (inches), mm (millimeters).
 <p>May be a fractional value, which is a floating point number appended with either % or %p, such as "<code>14.5%</code>".
 The % suffix always means a percentage of the base size; the optional %p suffix provides a size relative to
 some parent container.
-          @attr name net.microtrash.slicedup:icon
+          @attr name net.microtrash.slicecam:icon
         */
         public static final int IconButton_icon = 3;
     };

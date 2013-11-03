@@ -1,23 +1,6 @@
-/*******************************************************************************
-public CircleButton(Context context) {
-	    super(context);
-		init(context);
-	}
-
-	public CircleButton(Context context, AttributeSet attrs) {
-		super(context, attrs);
-		init(context);
-	}
-
-	public CircleButton(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
-		init(context);
-	} * Copyright (c) 2011, 2012 Stephan Petzl
- * All rights reserved.
- *******************************************************************************/
 package net.microtrash.slicedup.view;
 
-import net.microtrash.slicedup.R;
+import net.microtrash.slicecam.R;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -125,7 +108,7 @@ public class IconButton extends View {
 				this.setColor(theColor);
 			}
 
-			int theRadius = a.getDimensionPixelSize(R.styleable.IconButton_circleRadius, 30);
+			int theRadius = a.getDimensionPixelSize(R.styleable.IconButton_circleRadius, 60);
 			if (theRadius != 0) {
 				this.setRadius(theRadius);
 			}

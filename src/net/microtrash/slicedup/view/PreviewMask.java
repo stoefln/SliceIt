@@ -1,6 +1,6 @@
 package net.microtrash.slicedup.view;
 
-import net.microtrash.slicedup.R;
+import net.microtrash.slicecam.R;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.AttributeSet;
