@@ -1,4 +1,4 @@
-package net.microtrash.slicedup.activity;
+package net.microtrash.slicecam.activity;
 
 import java.util.Date;
 import java.util.List;
@@ -10,9 +10,9 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import net.microtrash.slicecam.R;
-import net.microtrash.slicedup.Static;
-import net.microtrash.slicedup.activity.DashboardActivity.CompositionAdapter;
-import net.microtrash.slicedup.dialog.SelectUserDialog.UserAdapter;
+import net.microtrash.slicecam.Static;
+import net.microtrash.slicecam.activity.DashboardActivity.CompositionAdapter;
+import net.microtrash.slicecam.dialog.SelectUserDialog.UserAdapter;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;

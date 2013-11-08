@@ -1,4 +1,4 @@
-package net.microtrash.slicedup;
+package net.microtrash.slicecam;
 
 import java.io.IOException;
 import java.util.Collections;

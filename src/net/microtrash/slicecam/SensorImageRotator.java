@@ -2,7 +2,7 @@
  * Copyright (c) 2011, 2012 Stephan Petzl
  * All rights reserved.
  *******************************************************************************/
-package net.microtrash.slicedup;
+package net.microtrash.slicecam;
 
 import java.util.ArrayList;
 

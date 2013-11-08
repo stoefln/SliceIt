@@ -1,4 +1,4 @@
-package net.microtrash.slicedup;
+package net.microtrash.slicecam;
 
 import java.io.File;
 import java.io.FileNotFoundException;

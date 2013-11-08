@@ -3,7 +3,7 @@
 
     <attr name="circleRadius" format="dimension" />
     <attr name="circleColor" format="color" />
-    <attr name="icon"  />
+    <attr name="icon" />
 
     <declare-styleable name="IconButton">
         <attr name="android:textColor" />
@@ -11,5 +11,6 @@
         <attr name="circleRadius" />
         <attr name="circleColor" />
     </declare-styleable>
+
 
 </resources>

@@ -1,4 +1,4 @@
-package net.microtrash.slicedup.lib;
+package net.microtrash.slicecam.lib;
 
 import java.util.Arrays;
 

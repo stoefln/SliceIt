@@ -1,4 +1,4 @@
-package net.microtrash.slicedup.view;
+package net.microtrash.slicecam.view;
 
 import net.microtrash.slicecam.R;
 import android.content.Context;

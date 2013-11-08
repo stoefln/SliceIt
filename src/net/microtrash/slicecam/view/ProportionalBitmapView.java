@@ -1,4 +1,4 @@
-package net.microtrash.slicedup.view;
+package net.microtrash.slicecam.view;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

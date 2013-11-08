@@ -1,22 +1,22 @@
-package net.microtrash.slicedup.activity;
+package net.microtrash.slicecam.activity;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import net.microtrash.slicecam.R;
-import net.microtrash.slicedup.BitmapDecodingTask;
-import net.microtrash.slicedup.BitmapDecodingTask.BitmapDecodingListener;
-import net.microtrash.slicedup.CameraController;
-import net.microtrash.slicedup.ImageSaver;
-import net.microtrash.slicedup.ImageSaver.OnImageSavedListener;
-import net.microtrash.slicedup.Static;
-import net.microtrash.slicedup.dialog.ProgressbarPopup;
-import net.microtrash.slicedup.dialog.SelectUserDialog;
-import net.microtrash.slicedup.lib.ImageEffects;
-import net.microtrash.slicedup.lib.Tools;
-import net.microtrash.slicedup.view.IconButton;
-import net.microtrash.slicedup.view.PreviewMask;
+import net.microtrash.slicecam.BitmapDecodingTask;
+import net.microtrash.slicecam.BitmapDecodingTask.BitmapDecodingListener;
+import net.microtrash.slicecam.CameraController;
+import net.microtrash.slicecam.ImageSaver;
+import net.microtrash.slicecam.ImageSaver.OnImageSavedListener;
+import net.microtrash.slicecam.Static;
+import net.microtrash.slicecam.dialog.ProgressbarPopup;
+import net.microtrash.slicecam.dialog.SelectUserDialog;
+import net.microtrash.slicecam.lib.ImageEffects;
+import net.microtrash.slicecam.lib.Tools;
+import net.microtrash.slicecam.view.IconButton;
+import net.microtrash.slicecam.view.PreviewMask;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -91,7 +91,7 @@ public class CameraActivity extends FragmentActivity implements BitmapDecodingLi
 		// WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		// setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.activity_camera);
 
 		ParseInstallation installation = ParseInstallation.getCurrentInstallation();
 		installation.put("user", ParseUser.getCurrentUser());

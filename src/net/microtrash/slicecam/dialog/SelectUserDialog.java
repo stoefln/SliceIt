@@ -1,9 +1,9 @@
-package net.microtrash.slicedup.dialog;
+package net.microtrash.slicecam.dialog;
 
 import java.util.List;
 
 import net.microtrash.slicecam.R;
-import net.microtrash.slicedup.Static;
+import net.microtrash.slicecam.Static;
 
 import org.json.JSONException;
 import org.json.JSONObject;

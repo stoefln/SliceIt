@@ -1,4 +1,4 @@
-package net.microtrash.slicedup.activity;
+package net.microtrash.slicecam.activity;
 
 import net.microtrash.slicecam.R;
 import android.app.Activity;

@@ -1,8 +1,8 @@
-package net.microtrash.slicedup;
+package net.microtrash.slicecam;
 
 
-import net.microtrash.slicedup.activity.DashboardActivity;
-import net.microtrash.slicedup.activity.CameraActivity;
+import net.microtrash.slicecam.activity.DashboardActivity;
+import net.microtrash.slicecam.activity.CameraActivity;
 import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;

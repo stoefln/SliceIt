@@ -1,6 +1,25 @@
-package net.microtrash.slicedup.view;
+/*******************************************************************************
+public CircleButton(Context context) {
+	    super(context);
+		init(context);
+	}
+
+	public CircleButton(Context context, AttributeSet attrs) {
+		super(context, attrs);
+		init(context);
+	}
+
+	public CircleButton(Context context, AttributeSet attrs, int defStyle) {
+		super(context, attrs, defStyle);
+		init(context);
+	} * Copyright (c) 2011, 2012 Stephan Petzl
+ * All rights reserved.
+ *******************************************************************************/
+package net.microtrash.slicecam.view;
+
 
 import net.microtrash.slicecam.R;
+import net.microtrash.slicecam.lib.Tools;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -53,6 +72,12 @@ public class IconButton extends View {
 		return radius;
 	}
 
+	public IconButton setRadiusDip(int radius) {
+		this.radius = Tools.dip2Pixels(radius, getContext());
+		this.setRadius(this.radius);
+		return this;
+	}
+
 	public IconButton setRadius(int radius) {
 		this.radius = radius;
 		this.setMinimumWidth(this.getTotalWidth());
@@ -100,27 +125,28 @@ public class IconButton extends View {
 
 	private void init(AttributeSet attrs) {
 
-		if (attrs != null) {
-			TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.IconButton);
+		TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.IconButton);
 
-			int theColor = a.getColor(R.styleable.IconButton_circleColor, Color.BLACK);
-			if (theColor != 0) {
-				this.setColor(theColor);
-			}
-
-			int theRadius = a.getDimensionPixelSize(R.styleable.IconButton_circleRadius, 60);
-			if (theRadius != 0) {
-				this.setRadius(theRadius);
-			}
-			this.drawable = a.getDrawable(R.styleable.IconButton_icon);
-			// this.bitmap = drawableToBitmap(drawable);
-			// Don't forget this
-			a.recycle();
+		int theColor = a.getColor(R.styleable.IconButton_circleColor, Color.BLACK);
+		if (theColor != 0) {
+			this.setColor(theColor);
 		}
+
+		int theRadius = a.getDimensionPixelSize(R.styleable.IconButton_circleRadius, Tools.dip2Pixels(50, getContext()));
+		if (theRadius != 0) {
+			this.setRadius(theRadius);
+		}
+		this.drawable = a.getDrawable(R.styleable.IconButton_icon);
+		if(drawable == null){
+			drawable = getResources().getDrawable(R.drawable.camera);
+		}
+		// this.bitmap = drawableToBitmap(drawable);
+		// Don't forget this
+		a.recycle();
 	}
 
 	private void init(Context context) {
-		this.setRadius(30);
+		this.setRadiusDip(30);
 
 		setClickable(true);
 		setBackgroundColor(0x00000000);
@@ -228,7 +254,7 @@ public class IconButton extends View {
 			matrix.postScale(scaleFactor, scaleFactor);
 			float scaledWidth = this.bitmap.getWidth() * scaleFactor;
 			float scaledHeight = this.bitmap.getHeight() * scaleFactor;
-
+		
 			matrix.postTranslate((this.getTotalWidth() - scaledWidth) / 2, (this.getTotalHeight() - scaledHeight) / 2);
 
 			canvas.save();
@@ -241,7 +267,7 @@ public class IconButton extends View {
 	}
 
 	protected Bitmap getDefaultBitmap() {
-		if (mBitmapDefault == null || dirty) {
+		if (mBitmapDefault == null || dirty ) {
 			mBitmapDefault = this.drawDefault();
 		}
 		return mBitmapDefault;
@@ -425,5 +451,7 @@ public class IconButton extends View {
 		return this;
 
 	}
+
+	
 
 }

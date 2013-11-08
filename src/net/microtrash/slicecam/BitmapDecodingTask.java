@@ -1,4 +1,4 @@
-package net.microtrash.slicedup;
+package net.microtrash.slicecam;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
