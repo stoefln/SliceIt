@@ -78,40 +78,42 @@ some parent container.
         public static final int spinner=0x7f020004;
     }
     public static final class id {
-        public static final int action_settings=0x7f070018;
-        public static final int activity_dashboard_btn_new=0x7f070009;
-        public static final int activity_dashboard_lv_requests=0x7f070008;
-        public static final int bRegister=0x7f07000f;
-        public static final int bt_shoot=0x7f070007;
-        public static final int dialog_message=0x7f070012;
-        public static final int dialog_send_to_lv=0x7f070013;
-        public static final int dialog_title=0x7f070011;
-        public static final int header=0x7f07000a;
-        public static final int item_composition_slice=0x7f070015;
-        public static final int item_composition_username=0x7f070014;
-        public static final int item_user_username=0x7f070016;
-        public static final int link_to_login=0x7f070010;
-        public static final int mask=0x7f070002;
-        public static final int mask_bottom=0x7f070004;
-        public static final int mask_top=0x7f070003;
-        public static final int outline=0x7f070005;
-        public static final int popup_progressbar_iv=0x7f070017;
-        public static final int preview=0x7f070001;
-        public static final int shutter_layer=0x7f070006;
+        public static final int action_settings=0x7f07001a;
+        public static final int activity_camera=0x7f070001;
+        public static final int activity_dashboard_btn_new=0x7f07000a;
+        public static final int activity_dashboard_lv_requests=0x7f070009;
+        public static final int bRegister=0x7f070010;
+        public static final int bt_shoot=0x7f070008;
+        public static final int dialog_message=0x7f070018;
+        public static final int dialog_send_to_lv=0x7f070019;
+        public static final int dialog_title=0x7f070017;
+        public static final int header=0x7f07000b;
+        public static final int item_composition_slice=0x7f070013;
+        public static final int item_composition_username=0x7f070012;
+        public static final int item_user_username=0x7f070014;
+        public static final int link_to_login=0x7f070011;
+        public static final int mask=0x7f070003;
+        public static final int mask_bottom=0x7f070005;
+        public static final int mask_top=0x7f070004;
+        public static final int outline=0x7f070006;
+        public static final int popup_progressbar_iv=0x7f070015;
+        public static final int popup_progressbar_tv_label=0x7f070016;
+        public static final int preview=0x7f070002;
+        public static final int shutter_layer=0x7f070007;
         public static final int tag_user=0x7f070000;
-        public static final int tbEmail=0x7f07000c;
-        public static final int tbPassword=0x7f07000d;
-        public static final int tbUsername=0x7f07000b;
-        public static final int tvError=0x7f07000e;
+        public static final int tbEmail=0x7f07000d;
+        public static final int tbPassword=0x7f07000e;
+        public static final int tbUsername=0x7f07000c;
+        public static final int tvError=0x7f07000f;
     }
     public static final class layout {
         public static final int activity_camera=0x7f030000;
         public static final int activity_dashboard=0x7f030001;
         public static final int activity_register=0x7f030002;
-        public static final int dialog_select_user=0x7f030003;
-        public static final int item_composition=0x7f030004;
-        public static final int item_user=0x7f030005;
-        public static final int popup_progressbar=0x7f030006;
+        public static final int item_composition=0x7f030003;
+        public static final int item_user=0x7f030004;
+        public static final int popup_progressbar=0x7f030005;
+        public static final int popup_select_user=0x7f030006;
     }
     public static final class menu {
         public static final int main=0x7f0a0000;

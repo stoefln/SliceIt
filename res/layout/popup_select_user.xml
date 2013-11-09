@@ -21,7 +21,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="Upload fertig!" />
+            android:text="Who is next?" />
 
         <View
             android:layout_width="match_parent"
@@ -34,11 +34,9 @@
             style="@style/Text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="24dp"
-            android:layout_marginRight="24dp"
             android:layout_marginTop="25dp"
             android:layout_marginBottom="25dp"
-            android:text="An wen willst du dein Bild senden?" />
+            android:text="Select the person you would like to contribute to your photo strip..." />
 
         <ListView
             android:id="@+id/dialog_send_to_lv"

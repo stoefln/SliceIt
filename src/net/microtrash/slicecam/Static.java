@@ -8,5 +8,6 @@ public class Static {
 	public static String FIELD_CREATED_BY = "createdBy";
 	public static String EXTRA_COMPOSITION_ID = "composition_id";
 	public static String FIELD_LAST_STEP = "lastStep";
+	public static String FIELD_USERNAME = "username";
 
 }

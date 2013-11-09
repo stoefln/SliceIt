@@ -12,7 +12,8 @@ import net.microtrash.slicecam.ImageSaver;
 import net.microtrash.slicecam.ImageSaver.OnImageSavedListener;
 import net.microtrash.slicecam.Static;
 import net.microtrash.slicecam.dialog.ProgressbarPopup;
-import net.microtrash.slicecam.dialog.SelectUserDialog;
+import net.microtrash.slicecam.dialog.SendToUserPopup;
+import net.microtrash.slicecam.dialog.SendToUserPopup.SendToUserPopupListener;
 import net.microtrash.slicecam.lib.ImageEffects;
 import net.microtrash.slicecam.lib.Tools;
 import net.microtrash.slicecam.view.IconButton;
@@ -23,6 +24,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
@@ -40,6 +42,8 @@ import android.view.Window;
 import android.widget.Toast;
 
 import com.parse.FindCallback;
+import com.parse.GetCallback;
+import com.parse.GetDataCallback;
 import com.parse.ParseACL;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -50,35 +54,25 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 public class CameraActivity extends FragmentActivity implements BitmapDecodingListener, OnImageSavedListener,
-		PictureCallback {
+		PictureCallback, SendToUserPopupListener {
 
 	public static final String LOGTAG = "VIDEOCAPTURE";
 
 	private static final String TAG = "MainActivity";
 
 	protected static final String TAG_SELECT_USER = "select_user";
-
 	private int sessionNumber;
-
 	private int step;
-
 	private IconButton shootButton;
-
 	private ImageSaver imageSaver, compositionSaver;
-
 	private View shutterLayer;
-
 	private CameraController cameraController;
-
 	private SurfaceView cameraView;
-
 	private PreviewMask mask;
-
 	private double ratio = 16d / 9d;
 
-	private ArrayList<String> imageFilenames;
-
-	private ParseObject currentComposition;
+	private ParseObject currentComposition = null;
+	private ParseObject lastSlice = null;
 
 	private ProgressbarPopup progressDialog;
 
@@ -106,6 +100,8 @@ public class CameraActivity extends FragmentActivity implements BitmapDecodingLi
 				cameraController.focus();
 			}
 		});
+		cameraController = new CameraController(this, 16d / 9d, cameraView);
+
 		mask = (PreviewMask) findViewById(R.id.mask);
 		mask.setRatio(ratio);
 
@@ -136,37 +132,76 @@ public class CameraActivity extends FragmentActivity implements BitmapDecodingLi
 			}
 
 		});
-		cameraController = new CameraController(this, 16d / 9d, cameraView);
+
 		imageSaver = new ImageSaver(this, this);
 		compositionSaver = new ImageSaver(this, this);
 		shutterLayer = findViewById(R.id.shutter_layer);
-		imageFilenames = new ArrayList<String>();
 
 		progressDialog = new ProgressbarPopup(this, shutterLayer);
-		if(getIntent().getExtras() != null){
+		if (getIntent().getExtras() != null) {
 			loadCurrentComposition(getIntent().getExtras().getString(Static.EXTRA_COMPOSITION_ID));
-			progressDialog.show();
+			progressDialog.show("loading last photo strip...");
 		}
 	}
-	
-	
 
-	private void loadCurrentComposition(String compositionId) {
-		ParseQuery<ParseObject> query = ParseQuery.getQuery("Composition");
-		query.whereEqualTo("objectId", compositionId);
-		query.findInBackground(new FindCallback<ParseObject>() {
-			public void done(List<ParseObject> compositions, ParseException e) {
-				if (e == null && compositions.size() > 0) {
-					Log.d("score", "Loaded " + compositions.size() + " composition");
-					currentComposition = compositions.get(0);
-					step = currentComposition.getInt(Static.FIELD_LAST_STEP);
+	private void loadCurrentComposition(final String compositionId) {
+		ParseQuery<ParseObject> compositionQuery = ParseQuery.getQuery("Composition");
+		compositionQuery.whereEqualTo("objectId", compositionId);
+		/*
+		 * compositionQuery.findInBackground(new FindCallback<ParseObject>() {
+		 * public void done(List<ParseObject> compositions, ParseException e) {
+		 * if (e == null && compositions.size() > 0) { Log.d("score", "Loaded "
+		 * + compositions.size() + " composition"); currentComposition =
+		 * compositions.get(0);
+		 * 
+		 * } else { Log.d(TAG, "Error: " + e.getMessage()); }
+		 * 
+		 * } });
+		 */
+		ParseQuery<ParseObject> query2 = ParseQuery.getQuery("Slice");
+		query2.whereMatchesQuery("composition", compositionQuery);
+		query2.include("composition");
+		query2.findInBackground(new FindCallback<ParseObject>() {
+
+			public void done(List<ParseObject> slices, ParseException e) {
+				if (e == null) {
+					if (slices.size() > 0) {
+						log("Loaded " + slices.size() + " slices");
+						lastSlice = slices.get(slices.size() - 1);
+
+						ParseFile sliceImage = (ParseFile) lastSlice.get("file");
+						sliceImage.getDataInBackground(new GetDataCallback() {
+							public void done(byte[] data, ParseException e) {
+								if (e == null) {
+									Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
+									Bitmap blurredSlice = ImageEffects.fastblur(bmp, 100, bmp.getWidth(),
+											(int) (bmp.getHeight() * (1d - 0.2)));
+									mask.addPreImage(blurredSlice);
+									step = lastSlice.getInt("step");
+									progressDialog.dismiss();
+									mask.setStep(step);
+									currentComposition = lastSlice.getParseObject("composition");
+								} else {
+									Log.d(TAG, "Error: " + e.getMessage());
+								}
+							}
+						});
+					} else {
+						log("No slices for composition " + compositionId + " found!");
+					}
+
 				} else {
-					Log.d("score", "Error: " + e.getMessage());
+					log("Error: " + e.getMessage());
 				}
-				progressDialog.dismiss();
-				mask.setStep(step);
+
 			}
+
 		});
+	}
+
+	private void log(String string) {
+		Log.v(TAG, string);
+
 	}
 
 	@Override
@@ -188,9 +223,8 @@ public class CameraActivity extends FragmentActivity implements BitmapDecodingLi
 
 	@Override
 	public void onPictureTaken(byte[] data, Camera camera) {
-		message("shot photo!");
 		new BitmapDecodingTask(CameraActivity.this).execute(data);
-
+		progressDialog.show("saving image...");
 	}
 
 	@Override
@@ -233,33 +267,38 @@ public class CameraActivity extends FragmentActivity implements BitmapDecodingLi
 		 * imageSaver.saveImageAsync(miniSlice, "sliceUp_" +
 		 * shotNumber+"_mini");
 		 */
-		Bitmap blurredSlice = ImageEffects.fastblur(miniSlice, 100, miniSlice.getWidth(),
-				(int) (miniSlice.getHeight() * (1d - visibleOfSlice)));
-		mask.addPreImage(blurredSlice);
 
 	}
 
 	@Override
 	public void onImageSaved(String filepath) {
 		if (filepath.contains("slice_S_")) {
-			imageFilenames.add(filepath);
-			step++;
-			mask.setStep(step);
+
 			Log.v(TAG, "shotNumber: " + step);
-			uploadSlice(step, filepath);
-			if (imageFilenames.size() >= 4) {
-				Bitmap composition = ImageEffects.createComposition(this, imageFilenames);
+			uploadSlice(step + 1, filepath);
+			if (step + 1 >= 4) {
+				Bitmap composition = ImageEffects.createComposition(this, getSliceFilenames());
 				imageSaver.saveImageAsync(composition, "compositions", "composition_" + step);
-				imageFilenames = new ArrayList<String>();
 
 			}
 		} else if (filepath.contains("composition_")) {
+
+			// TODO: create activity which shows the image + a
+			// "send this to <username>" button
+
 			Intent intent = new Intent();
 			intent.setAction(android.content.Intent.ACTION_VIEW);
 			intent.setDataAndType(Uri.fromFile(new File(filepath)), "image/png");
 			startActivity(intent);
 		}
 
+	}
+
+	private ArrayList<String> getSliceFilenames() {
+		ArrayList<String> filenames = new ArrayList<String>();
+		// TODO: check whether all slices have been downloaded and return the
+		// filenames of them
+		return filenames;
 	}
 
 	private void uploadSlice(final int step, String scaledCompositionPath) {
@@ -272,12 +311,40 @@ public class CameraActivity extends FragmentActivity implements BitmapDecodingLi
 
 		final SaveCallback onSliceSaved = new SaveCallback() {
 			@Override
-			public void done(ParseException ex) {
+			public void done(final ParseException ex) {
 				if (ex == null) {
-					Toast.makeText(CameraActivity.this, "uploaded!", Toast.LENGTH_LONG).show();
-					Log.v(TAG, "uploaded!");
-					SelectUserDialog.newInstance(slice.getObjectId())
-							.show(getSupportFragmentManager(), TAG_SELECT_USER);
+					
+					Log.v(TAG, "onSliceSaved()");
+
+					final SendToUserPopup sendToUserPopup = new SendToUserPopup(CameraActivity.this,
+							findViewById(R.id.activity_camera), slice.getObjectId(), CameraActivity.this);
+					if (lastSlice == null) {
+						ParseQuery<ParseUser> query = ParseUser.getQuery();
+						query.findInBackground(new FindCallback<ParseUser>() {
+							public void done(List<ParseUser> users, ParseException e) {
+								if (e == null) {
+									Log.v("user", "total: " + users.size());
+									progressDialog.dismiss();
+									sendToUserPopup.showUserSelection(users);
+								} else {
+									ex.printStackTrace();
+									// Something went wrong -> show "retry"
+									// button.
+								}
+							}
+						});
+					} else {
+
+						lastSlice.getParseUser("createdBy").fetchIfNeededInBackground(new GetCallback<ParseObject>() {
+							public void done(ParseObject user, ParseException e) {
+								sendToUserPopup.sendToUser((ParseUser) user);
+							}
+						});
+
+					}
+
+				} else {
+					ex.printStackTrace();
 				}
 			}
 
@@ -291,11 +358,11 @@ public class CameraActivity extends FragmentActivity implements BitmapDecodingLi
 			public void done(ParseException ex) {
 				if (ex == null) {
 					composition = getCurrentComposition();
-					
+
 					composition.put(Static.FIELD_LAST_STEP, step);
-					
+
 					slice.put("file", upload);
-					slice.put("createdBy", ParseUser.getCurrentUser().getUsername());
+					slice.put("createdBy", ParseUser.getCurrentUser());
 					slice.put("step", step);
 					slice.put(Static.FIELD_COMPOSITION, composition);
 
@@ -326,6 +393,12 @@ public class CameraActivity extends FragmentActivity implements BitmapDecodingLi
 			Log.v(TAG, "continuing composition " + currentComposition.getObjectId());
 		}
 		return currentComposition;
+	}
+
+	@Override
+	public void onNotificationSent(ParseUser user) {
+		Toast.makeText(this, "Your photo was sent!", Toast.LENGTH_SHORT).show();
+		finish();
 	}
 
 }

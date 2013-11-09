@@ -11,6 +11,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
+import android.widget.TextView;
 
 @SuppressLint("ViewConstructor")
 public class ProgressbarPopup extends PopupWindow {
@@ -23,6 +24,7 @@ public class ProgressbarPopup extends PopupWindow {
 	private View parentView;
 	private ImageView spinner;
 	private Animation rotateAnim;
+	private TextView label;
 
 	public ProgressbarPopup(Context context, View parentView) {
 		super(context);
@@ -37,6 +39,7 @@ public class ProgressbarPopup extends PopupWindow {
 		setBackgroundDrawable(new ColorDrawable());
 		setFocusable(true);
 
+		label = (TextView) dialogLayout.findViewById(R.id.popup_progressbar_tv_label);
 		spinner = (ImageView) dialogLayout.findViewById(R.id.popup_progressbar_iv);
 		rotateAnim = AnimationUtils.loadAnimation(context, R.anim.rotate);
 		rotateAnim.setRepeatCount(Integer.MAX_VALUE);
@@ -45,19 +48,33 @@ public class ProgressbarPopup extends PopupWindow {
 
 	@Override
 	public void dismiss() {
-		spinner.setAnimation(null);
-		super.dismiss();
+		try {
+			spinner.setAnimation(null);
+			super.dismiss();
+		} catch (Exception ex) {
+
+		}
 	}
 
-	public void show() {
+	public void show(String string) {
+		label.setText(string);
 		parentView.post(new Runnable() {
 			@Override
 			public void run() {
 				spinner.startAnimation(rotateAnim);
-				showAtLocation(parentView, 0, 0, 0);
+				if (parentView != null) {
+					try {
+						showAtLocation(parentView, 0, 0, 0);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
 			}
 		});
+	}
 
+	public void show() {
+		show("");
 	}
 
 	public void showDelayed() {
@@ -71,4 +88,5 @@ public class ProgressbarPopup extends PopupWindow {
 		}, 500);
 
 	}
+
 }

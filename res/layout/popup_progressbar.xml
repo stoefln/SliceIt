@@ -13,4 +13,16 @@
         android:contentDescription="@null"
         android:src="@drawable/spinner" />
 
+    <TextView
+        android:id="@+id/popup_progressbar_tv_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/popup_progressbar_iv" 
+        android:layout_alignRight="@+id/popup_progressbar_iv"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="test"
+        android:textColor="#fff"/>
+
 </RelativeLayout>

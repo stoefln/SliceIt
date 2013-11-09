@@ -12,8 +12,10 @@ import com.parse.ParseUser;
 import net.microtrash.slicecam.R;
 import net.microtrash.slicecam.Static;
 import net.microtrash.slicecam.activity.DashboardActivity.CompositionAdapter;
-import net.microtrash.slicecam.dialog.SelectUserDialog.UserAdapter;
+import net.microtrash.slicecam.dialog.ProgressbarPopup;
+import net.microtrash.slicecam.dialog.SendToUserPopup.UserAdapter;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,6 +28,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 public class DashboardActivity extends Activity {
+
+	private ProgressbarPopup progressDialog;
+	private ListView listView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +48,16 @@ public class DashboardActivity extends Activity {
 			}
 		});
 
-		final ListView listView = (ListView) v.findViewById(R.id.activity_dashboard_lv_requests);
+		listView = (ListView) v.findViewById(R.id.activity_dashboard_lv_requests);
 
+		
+		progressDialog = new ProgressbarPopup(this, v); 
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		progressDialog.show("Loading photo strips...");
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("Composition");
 		// query.whereEqualTo("playerName", "Dan Stemkoski");
 		query.findInBackground(new FindCallback<ParseObject>() {
@@ -53,13 +66,13 @@ public class DashboardActivity extends Activity {
 					Log.d("score", "Retrieved " + compositions.size() + " scores");
 					CompositionAdapter adapter = new CompositionAdapter(compositions);
 					listView.setAdapter(adapter);
+					progressDialog.dismiss();
 				} else {
 					Log.d("score", "Error: " + e.getMessage());
 				}
 			}
 		});
 	}
-
 	private void startCameraActivity(String compositionId) {
 		Intent i = new Intent(getApplicationContext(), CameraActivity.class);
 		if(compositionId != null){

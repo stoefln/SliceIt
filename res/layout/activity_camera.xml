@@ -1,6 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/lib/net.microtrash.slicecam"
+    android:id="@+id/activity_camera"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000000"

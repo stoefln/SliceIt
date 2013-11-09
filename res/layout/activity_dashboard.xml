@@ -11,21 +11,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:text="Requests" />
+        android:text="Your photo strips" />
 
     <ListView
         android:id="@+id/activity_dashboard_lv_requests"
         android:layout_width="match_parent"
-        android:layout_height="0dp" 
-        android:layout_weight="1"
-        android:layout_marginBottom="@dimen/content_space"/>
+        android:layout_height="0dp"
+        android:layout_marginBottom="@dimen/content_space"
+        android:layout_weight="1" />
 
     <Button
         android:id="@+id/activity_dashboard_btn_new"
+        style="@style/ColorButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        style="@style/ColorButton"
-        android:text="Start a new composition!" />
+        android:text="Start a new photo strip!" />
 
 </LinearLayout>
