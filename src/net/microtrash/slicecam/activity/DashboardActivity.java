@@ -3,29 +3,25 @@ package net.microtrash.slicecam.activity;
 import java.util.Date;
 import java.util.List;
 
-import com.parse.FindCallback;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
-import com.parse.ParseUser;
-
 import net.microtrash.slicecam.R;
 import net.microtrash.slicecam.Static;
-import net.microtrash.slicecam.activity.DashboardActivity.CompositionAdapter;
 import net.microtrash.slicecam.dialog.ProgressbarPopup;
-import net.microtrash.slicecam.dialog.SendToUserPopup.UserAdapter;
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 public class DashboardActivity extends Activity {
 
@@ -50,8 +46,7 @@ public class DashboardActivity extends Activity {
 
 		listView = (ListView) v.findViewById(R.id.activity_dashboard_lv_requests);
 
-		
-		progressDialog = new ProgressbarPopup(this, v); 
+		progressDialog = new ProgressbarPopup(this, v);
 	}
 
 	@Override
@@ -73,9 +68,10 @@ public class DashboardActivity extends Activity {
 			}
 		});
 	}
+
 	private void startCameraActivity(String compositionId) {
 		Intent i = new Intent(getApplicationContext(), CameraActivity.class);
-		if(compositionId != null){
+		if (compositionId != null) {
 			i.putExtra(Static.EXTRA_COMPOSITION_ID, compositionId);
 		}
 		startActivity(i);
@@ -130,22 +126,26 @@ public class DashboardActivity extends Activity {
 				itemView = DashboardActivity.this.getLayoutInflater().inflate(R.layout.item_composition, parent, false);
 				itemView.setLayoutParams(new ListView.LayoutParams(ListView.LayoutParams.WRAP_CONTENT,
 						ListView.LayoutParams.WRAP_CONTENT));
-				itemView.setOnClickListener(onClickListener);
 			} else {
 				itemView = convertView;
 			}
 
-			ParseObject object = list.get(position);
-			itemView.setTag(R.id.tag_user, object);
+			
 
 			TextView tvUsername = (TextView) itemView.findViewById(R.id.item_composition_username);
 			TextView tvSlice = (TextView) itemView.findViewById(R.id.item_composition_slice);
+			Button btContinue = (Button) itemView.findViewById(R.id.item_composition_bt_continue);
+			ParseObject object = list.get(position);
+			btContinue.setTag(R.id.tag_user, object);
+			btContinue.setOnClickListener(onClickListener);
+			
 			tvUsername.setText(object.getString(Static.FIELD_CREATED_BY));
 			Date date = object.getDate("createdAt");
-			if(date != null){
+			if (date != null) {
 				tvSlice.setText(date.toString());
 			}
-			tvSlice.setText("step: "+object.getInt(Static.FIELD_LAST_STEP) + "/4 \t ID: " + object.getObjectId());
+			tvSlice.setText("step: " + (object.getInt(Static.FIELD_LAST_STEP) + 1) + "/4 \t ID: "
+					+ object.getObjectId());
 			return itemView;
 		}
 

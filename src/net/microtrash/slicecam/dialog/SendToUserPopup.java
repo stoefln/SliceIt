@@ -97,8 +97,10 @@ public class SendToUserPopup extends PopupWindow {
 		parentView.post(new Runnable() {
 			@Override
 			public void run() {
-
-				showAtLocation(parentView, 0, 0, 0);
+				try {
+					showAtLocation(parentView, 0, 0, 0);
+				} catch (Exception e) {
+				}
 			}
 		});
 
@@ -111,7 +113,7 @@ public class SendToUserPopup extends PopupWindow {
 
 	public void sendToUser(final ParseUser user) {
 		show();
-		
+
 		progressDialog.show("sending your photo\nto " + user.getUsername());
 
 		ParseQuery userQuery = ParseUser.getQuery();
@@ -130,18 +132,21 @@ public class SendToUserPopup extends PopupWindow {
 		push.setQuery(pushQuery);
 		push.setMessage(ParseUser.getCurrentUser().getUsername() + " sent you a photo slice!");
 		push.sendInBackground(new SendCallback() {
-			
+
 			@Override
 			public void done(ParseException arg0) {
 				progressDialog.dismiss();
-				dismiss();
+				try {
+					dismiss();
+				} catch (Exception e) {
+				}
 				listener.onNotificationSent(user);
 			}
 		});
 	}
 
 	private void compositionUpdated(ParseUser user) {
-		
+
 	}
 
 	public class UserAdapter extends BaseAdapter {

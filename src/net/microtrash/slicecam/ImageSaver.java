@@ -30,8 +30,8 @@ public class ImageSaver {
 	private int imageQuality = 90;
 	private String defaultImageFormat = "JPEG";
 
-	private OnImageSavedListener listener;
-	private String imageBaseName;
+	
+	
 	private static final String TAG = "ImageSaver";
 
 	public String getDefaultImageFormat() {
@@ -50,15 +50,17 @@ public class ImageSaver {
 		this.imageQuality = imageQuality;
 	}
 
-	public ImageSaver(Activity context, OnImageSavedListener listener) {
+	public ImageSaver(Activity context) {
 		this.context = context;
-		this.listener = listener;
-
 	}
 
 	public void saveImageAsync(Bitmap bitmap, String directoryName, String imageBaseName) {
-		this.imageBaseName = imageBaseName;
-		SaveCompositionTask saveImageTask = new SaveCompositionTask(directoryName);
+		saveImageAsync(bitmap, directoryName, imageBaseName, null);
+	}
+
+	public void saveImageAsync(Bitmap bitmap, String directoryName, String imageBaseName, OnImageSavedListener listener) {
+		
+		SaveCompositionTask saveImageTask = new SaveCompositionTask(directoryName, imageBaseName, listener);
 		saveImageTask.execute(bitmap);
 
 	}
@@ -67,9 +69,13 @@ public class ImageSaver {
 
 		private String lastCompositionPath;
 		private String directoryName;
-
-		public SaveCompositionTask(String directoryName) {
+		private String imageBaseName;
+		private OnImageSavedListener listener;
+		
+		public SaveCompositionTask(String directoryName, String imageBaseName, OnImageSavedListener listener) {
+			this.imageBaseName = imageBaseName;
 			this.directoryName = directoryName;
+			this.listener = listener;
 		}
 
 		protected void onProgressUpdate(Integer... progress) {
@@ -79,7 +85,7 @@ public class ImageSaver {
 		protected Long doInBackground(Object... params) {
 			Bitmap image = (Bitmap) params[0];
 			long currentTime = System.currentTimeMillis();
-			String imageFilename = imageBaseName + "_" + currentTime + ".jpg";
+			String imageFilename = imageBaseName + ".jpg";
 
 			lastCompositionPath = saveImage(directoryName, imageFilename, image, false);
 			return null;
@@ -137,7 +143,7 @@ public class ImageSaver {
 				return saveUri.toString();
 			} else {
 
-				String filePath = String.format(dir + filename, System.currentTimeMillis());
+				String filePath = dir + filename;
 				stream = new FileOutputStream(filePath);
 				processedImage.compress(CompressFormat.JPEG, this.imageQuality, stream);
 

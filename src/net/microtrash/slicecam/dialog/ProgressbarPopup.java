@@ -66,7 +66,7 @@ public class ProgressbarPopup extends PopupWindow {
 					try {
 						showAtLocation(parentView, 0, 0, 0);
 					} catch (Exception e) {
-						e.printStackTrace();
+						
 					}
 				}
 			}

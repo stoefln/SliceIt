@@ -12,7 +12,7 @@
         android:background="@color/sep_thin" />
 
     <RelativeLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content" >
 
         <TextView
@@ -27,8 +27,15 @@
             style="@style/Text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+            android:layout_below="@+id/item_composition_username"
             android:text="slice" />
+
+        <Button
+            android:id="@+id/item_composition_bt_continue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="Continue..." />
     </RelativeLayout>
 
 </LinearLayout>

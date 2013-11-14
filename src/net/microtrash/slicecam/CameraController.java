@@ -6,6 +6,8 @@ import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.List;
 
+import net.microtrash.slicecam.lib.Profiler;
+
 import android.content.Context;
 import android.content.res.Configuration;
 import android.hardware.Camera;
@@ -14,6 +16,7 @@ import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.ShutterCallback;
 import android.hardware.Camera.Size;
 import android.os.Debug;
+import android.provider.ContactsContract.Profile;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
@@ -35,6 +38,7 @@ public class CameraController implements Callback {
 	private Context context;
 
 	public CameraController(Context context, double previewTargetRatio, SurfaceView cameraView) {
+		Profiler.start("CameraController");
 		this.previewTargetRatio = previewTargetRatio;
 		this.context = context;
 		surfaceView = cameraView;
@@ -73,6 +77,7 @@ public class CameraController implements Callback {
 	}
 
 	private void setCameraPictureSize() {
+		
 		Camera.Parameters parameters = this.camera.getParameters();
 		if (parameters.getPictureSize() != this.getBestPictureSize()) {
 			parameters.setPictureSize(getBestPictureSize().width, getBestPictureSize().height);

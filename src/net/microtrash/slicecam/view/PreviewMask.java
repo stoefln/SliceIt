@@ -4,6 +4,7 @@ import net.microtrash.slicecam.R;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
@@ -34,6 +35,7 @@ public class PreviewMask extends RelativeLayout {
 
 		topView = (RelativeLayout) findViewById(R.id.mask_top);
 		bottomView = (RelativeLayout) findViewById(R.id.mask_bottom);
+		
 	}
 
 	@Override
@@ -56,8 +58,10 @@ public class PreviewMask extends RelativeLayout {
 	}
 
 	private void positionOutline(int height, int width) {
-		double maskHeight = (double) width / getRatio();
 		outline = (ImageView) findViewById(R.id.outline);
+		outline.setVisibility(View.VISIBLE);
+		double maskHeight = (double) width / getRatio();
+		
 		RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) outline.getLayoutParams();
 
 		int offset = (int) ((1 - getStep()) * maskHeight);
@@ -92,5 +96,7 @@ public class PreviewMask extends RelativeLayout {
 		this.step = step;
 		positionOutline(getHeight(), getWidth());
 	}
+
+
 
 }

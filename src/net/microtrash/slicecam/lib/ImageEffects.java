@@ -249,19 +249,19 @@ public class ImageEffects {
 		return (bitmap);
 	}
 
-	public static Bitmap createComposition(Context c, ArrayList<String> imageFilenames) {
+	public static Bitmap createComposition(Context c, ArrayList<String> imageFilenpaths) {
 
 		int i = 0;
 		Bitmap mainImage = null;
 		Canvas canvas = null;
 		Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		Matrix matrix = new Matrix();
-		for (String filename : imageFilenames) {
+		for (String filename : imageFilenpaths) {
 			BitmapFactory.Options options = new BitmapFactory.Options();
 			// options.inJustDecodeBounds = true;
 			Bitmap bitmap = BitmapFactory.decodeFile(filename, options);
 			if (mainImage == null) {
-				mainImage = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight() * imageFilenames.size(),
+				mainImage = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight() * imageFilenpaths.size(),
 						Bitmap.Config.ARGB_8888);
 				canvas = new Canvas(mainImage);
 			}
