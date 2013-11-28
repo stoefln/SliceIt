@@ -4,18 +4,15 @@
     android:layout_height="wrap_content"
     android:orientation="vertical" >
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/sep_thin"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="10dp"
-        android:background="@color/sep_thin" />
 
-    <TextView
+    <net.microtrash.slicecam.view.BubbleText
         android:id="@+id/item_user_username"
         style="@style/Text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="username" />
+        android:textSize="18sp"
+        android:gravity="center"
+        android:text="username" 
+        />
 
 </LinearLayout>

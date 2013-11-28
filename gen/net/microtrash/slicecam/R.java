@@ -51,10 +51,15 @@ some parent container.
     }
     public static final class color {
         public static final int dialog_background=0x7f050003;
+        public static final int green=0x7f050009;
         public static final int gui_main_color=0x7f050000;
+        public static final int magenta=0x7f050007;
+        public static final int orange=0x7f050006;
+        public static final int purple=0x7f050008;
         public static final int sep_thick=0x7f050002;
         public static final int sep_thin=0x7f050004;
         public static final int test_color=0x7f050001;
+        public static final int yellow=0x7f050005;
     }
     public static final class dimen {
         /**  Default screen margins, per the Android Design guidelines. 
@@ -71,11 +76,12 @@ some parent container.
         public static final int sep_thin=0x7f060005;
     }
     public static final class drawable {
-        public static final int camera=0x7f020000;
-        public static final int debut_dark=0x7f020001;
-        public static final int figure=0x7f020002;
-        public static final int ic_launcher=0x7f020003;
-        public static final int spinner=0x7f020004;
+        public static final int button_bg=0x7f020000;
+        public static final int camera=0x7f020001;
+        public static final int debut_dark=0x7f020002;
+        public static final int figure=0x7f020003;
+        public static final int ic_launcher=0x7f020004;
+        public static final int spinner=0x7f020005;
     }
     public static final class id {
         public static final int action_settings=0x7f07001e;
@@ -88,7 +94,7 @@ some parent container.
         public static final int bRegister=0x7f070013;
         public static final int bt_shoot=0x7f070008;
         public static final int dialog_message=0x7f07001c;
-        public static final int dialog_send_to_lv=0x7f07001d;
+        public static final int dialog_send_to_gv=0x7f07001d;
         public static final int dialog_title=0x7f07001b;
         public static final int header=0x7f07000e;
         public static final int item_composition_bt_continue=0x7f070017;

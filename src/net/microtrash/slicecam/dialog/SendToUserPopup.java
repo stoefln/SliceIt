@@ -13,6 +13,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.BaseAdapter;
+import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -41,7 +42,7 @@ public class SendToUserPopup extends PopupWindow {
 
 	private View dialogLayout;
 
-	private ListView listView;
+	private GridView gridView;
 
 	private String sliceId;
 
@@ -59,7 +60,7 @@ public class SendToUserPopup extends PopupWindow {
 		inflater = LayoutInflater.from(context);
 		dialogLayout = inflater.inflate(R.layout.popup_select_user, null);
 		setContentView(dialogLayout);
-		listView = (ListView) dialogLayout.findViewById(R.id.dialog_send_to_lv);
+		gridView = (GridView) dialogLayout.findViewById(R.id.dialog_send_to_gv);
 
 		setWidth(LayoutParams.MATCH_PARENT);
 		setHeight(LayoutParams.MATCH_PARENT);
@@ -107,7 +108,7 @@ public class SendToUserPopup extends PopupWindow {
 	}
 
 	public void showUserSelection(List<ParseUser> users) {
-		listView.setAdapter(new UserAdapter(users));
+		gridView.setAdapter(new UserAdapter(users));
 		show();
 	}
 

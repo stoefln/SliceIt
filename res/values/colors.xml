@@ -6,5 +6,9 @@
     <color name="sep_thick">#FFFFFF</color>
     <color name="dialog_background">#99000000</color>
     <color name="sep_thin">#66FFFFFF</color>
-
+	<color name="yellow">#ecd078</color>
+	<color name="orange">#d95b43</color>
+	<color name="magenta">#c02942</color>
+	<color name="purple">#542437</color>
+	<color name="green">#53777a</color>
 </resources>

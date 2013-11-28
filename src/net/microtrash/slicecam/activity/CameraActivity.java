@@ -102,7 +102,14 @@ public class CameraActivity extends FragmentActivity implements BitmapDecodingLi
 				cameraController.focus();
 			}
 		});
-		cameraController = new CameraController(this, 16d / 9d, cameraView);
+		cameraView.postDelayed(new Runnable() {
+			
+			@Override
+			public void run() {
+				cameraController = new CameraController(CameraActivity.this, 16d / 9d, cameraView);
+				cameraController.start();
+			}
+		}, 500);
 
 		mask = (PreviewMask) findViewById(R.id.mask);
 		mask.setRatio(ratio);

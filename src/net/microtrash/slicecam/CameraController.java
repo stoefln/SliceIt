@@ -69,6 +69,7 @@ public class CameraController implements Callback {
 	private PictureCallback takePhotoCallback;
 
 	private void setCameraPreviewSize() {
+		Profiler.measure("setCameraPreviewSize");
 		Camera.Parameters parameters = camera.getParameters();
 		if (parameters.getPreviewSize() != this.getBestPreviewSize()) {
 			parameters.setPreviewSize(this.getBestPreviewSize().width, this.getBestPreviewSize().height);
@@ -77,7 +78,7 @@ public class CameraController implements Callback {
 	}
 
 	private void setCameraPictureSize() {
-		
+		Profiler.measure("setCameraPictureSize");
 		Camera.Parameters parameters = this.camera.getParameters();
 		if (parameters.getPictureSize() != this.getBestPictureSize()) {
 			parameters.setPictureSize(getBestPictureSize().width, getBestPictureSize().height);
@@ -91,7 +92,7 @@ public class CameraController implements Callback {
 		 * double fullWidth = (double) cameraActivity.display.getWidth(); double
 		 * fullHeight = (double) cameraActivity.display.getHeight();
 		 */
-
+		Profiler.measure("calculateOptimalPictureAndPreviewSizes");
 		Log.v(TAG, "calculateOptimalPictureAndPreviewSizes() width targetRatio: " + previewTargetRatio + " fullWidth:"
 				+ fullWidth + " fullHeight:" + fullHeight);
 
@@ -181,6 +182,7 @@ public class CameraController implements Callback {
 			Log.v(TAG, "choosen downScalingFactor: " + downscalingFactor);
 
 		}
+		Profiler.measure("...done");
 
 	}
 
@@ -267,18 +269,19 @@ public class CameraController implements Callback {
 
 		return downscalingFactor;
 	}
+	
+	public void start() {
+		surfaceCreated(holder);		
+	}
+
 
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
+		Profiler.measure("---> surfaceCreated()");
 		camera = Camera.open();
-
+		Profiler.measure("camera opened()");
+		
 		try {
-			camera.getParameters().setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		try {
-
 			setupAndStartPreview();
 
 		} catch (IOException e) {
@@ -296,7 +299,7 @@ public class CameraController implements Callback {
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 		Log.v(TAG, "surfaceChanged");
-
+		Profiler.measure("---> surfaceChanged()");
 		if (previewRunning) {
 			camera.stopPreview();
 		}
@@ -311,6 +314,14 @@ public class CameraController implements Callback {
 	}
 
 	private void setupAndStartPreview() throws IOException {
+		Profiler.measure("setupAndStartPreview()");
+		try {
+			camera.getParameters().setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+			Profiler.measure("setFocusMode()");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		double ratio = (double) getBestPreviewSize().width / (double) getBestPreviewSize().height;
 		Configuration cfg = context.getResources().getConfiguration();
 		int width = surfaceView.getWidth();
@@ -390,4 +401,5 @@ public class CameraController implements Callback {
 
 	}
 
+	
 }

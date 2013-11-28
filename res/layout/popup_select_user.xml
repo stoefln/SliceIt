@@ -38,12 +38,13 @@
             android:layout_marginBottom="25dp"
             android:text="Select the person you would like to contribute to your photo strip..." />
 
-        <ListView
-            android:id="@+id/dialog_send_to_lv"
+        <GridView
+            android:id="@+id/dialog_send_to_gv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-             >
-        </ListView>
+            android:numColumns="3" >
+        </GridView>
+
     </LinearLayout>
 
 </RelativeLayout>
