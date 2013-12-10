@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/debut_dark"
+    android:fillViewport="true" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <LinearLayout
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="5dip"
+            android:paddingTop="5dip" >
+
+            <!-- Logo Start -->
+
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="@dimen/content_space"
+                android:src="@drawable/ic_launcher" />
+            <!-- Logo Ends -->
+
+            <TextView
+                style="@style/Text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="Login to SliceCam..." />
+        </LinearLayout>
+
+        <!-- Registration Form -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/header"
+            android:orientation="vertical"
+            android:padding="10dip" >
+
+            <EditText
+                android:id="@+id/tbUsername"
+                style="@style/EditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/content_space"
+                android:layout_marginTop="5dip"
+                android:hint="Username"
+                android:singleLine="true" />
+
+            <EditText
+                android:id="@+id/tbPassword"
+                style="@style/EditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dip"
+                android:hint="Password"
+                android:password="true"
+                android:singleLine="true" />
+
+            <!-- Register Button -->
+
+            <TextView
+                android:id="@+id/tvError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="Error occured"
+                android:textColor="@color/magenta" />
+
+            <Button
+                android:id="@+id/bLogin"
+                style="@style/ColorButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dip"
+                android:text="Login" />
+            <!-- Link to Login Screen -->
+
+            <TextView
+                android:id="@+id/activity_register_tv_register"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="40dip"
+                android:layout_marginTop="@dimen/content_space"
+                android:gravity="center"
+                android:text="Don't have an account? Create one here here!"
+                android:textColor="@color/magenta"
+                android:textSize="@dimen/content_space" />
+        </LinearLayout>
+        <!-- Registration Form Ends -->
+    </RelativeLayout>
+
+</ScrollView>

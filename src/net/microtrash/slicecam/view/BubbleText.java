@@ -3,9 +3,7 @@ package net.microtrash.slicecam.view;
 
 import net.microtrash.slicecam.R;
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Typeface;
@@ -26,6 +24,10 @@ public class BubbleText extends TextView {
 	private int savedLeft;
 	private int savedTop;
 	private int radius;
+
+	public int getRadius(){
+		return radius;
+	}
 
 	public BubbleText(Context context) {
 		super(context);
@@ -84,7 +86,7 @@ public class BubbleText extends TextView {
 		int padding = 0;
 		float paddingFactor = 2.7f;
 
-		if (width <= height) {
+		if (width <= height || height == 0) {
 			setMeasuredDimension(width, width);
 			radius = width / 2;
 		} else {

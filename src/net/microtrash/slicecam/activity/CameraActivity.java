@@ -17,6 +17,7 @@ import net.microtrash.slicecam.lib.ImageEffects;
 import net.microtrash.slicecam.lib.Tools;
 import net.microtrash.slicecam.view.IconButton;
 import net.microtrash.slicecam.view.PreviewMask;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -360,7 +361,7 @@ public class CameraActivity extends FragmentActivity implements BitmapDecodingLi
 				Log.v(TAG, "onSliceSaved()");
 
 				final SendToUserPopup sendToUserPopup = new SendToUserPopup(CameraActivity.this,
-						findViewById(R.id.activity_camera), freshSliceObject.getObjectId(), CameraActivity.this);
+						findViewById(R.id.activity_camera), freshSliceObject, CameraActivity.this);
 				if (lastSlice == null) {
 					ParseQuery<ParseUser> query = ParseUser.getQuery();
 					query.findInBackground(new FindCallback<ParseUser>() {
@@ -378,19 +379,20 @@ public class CameraActivity extends FragmentActivity implements BitmapDecodingLi
 					});
 				} else {
 					allSlices.add(freshSliceObject);
-					if (step >= 2) {
+					if (step >= Static.MAX_STEPS) {
 						Intent intent = new Intent(getApplicationContext(), PhotoStripActivity.class);
 						intent.putExtra(Static.EXTRA_COMPOSITION_ID, currentComposition.getObjectId());
 						intent.putStringArrayListExtra(Static.EXTRA_SLICE_FILENAMES, getSliceFilenames(allSlices));
 						startActivity(intent);
+						
+					} else {
 
+						lastSlice.getParseUser("createdBy").fetchIfNeededInBackground(new GetCallback<ParseObject>() {
+							public void done(ParseObject user, ParseException e) {
+								sendToUserPopup.sendToUser((ParseUser) user);
+							}
+						});
 					}
-
-					lastSlice.getParseUser("createdBy").fetchIfNeededInBackground(new GetCallback<ParseObject>() {
-						public void done(ParseObject user, ParseException e) {
-							sendToUserPopup.sendToUser((ParseUser) user);
-						}
-					});
 
 				}
 
@@ -424,6 +426,14 @@ public class CameraActivity extends FragmentActivity implements BitmapDecodingLi
 		// TODO: update filename of first slice which was shot -> we need the
 		// compositionId there
 		finish();
+	}
+
+	public static void start(String compositionId, Context c) {
+		Intent i = new Intent(c, CameraActivity.class);
+		if (compositionId != null) {
+			i.putExtra(Static.EXTRA_COMPOSITION_ID, compositionId);
+		}
+		c.startActivity(i);
 	}
 
 }

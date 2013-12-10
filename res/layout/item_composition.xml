@@ -1,41 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="@dimen/content_space" >
 
-    <View
+    <TextView
         android:layout_width="match_parent"
-        android:layout_height="@dimen/sep_thin"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="10dp"
-        android:background="@color/sep_thin" />
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="Photostrip done!"
+        android:textColor="#FFF"
+        android:textSize="28sp" />
 
-    <RelativeLayout
+    <ImageView
+        android:id="@+id/item_composition_iv"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
-
-        <TextView
-            android:id="@+id/item_composition_username"
-            style="@style/Text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="username" />
-
-        <TextView
-            android:id="@+id/item_composition_slice"
-            style="@style/Text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/item_composition_username"
-            android:text="slice" />
-
-        <Button
-            android:id="@+id/item_composition_bt_continue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:text="Continue..." />
-    </RelativeLayout>
+        android:layout_height="match_parent" />
 
 </LinearLayout>

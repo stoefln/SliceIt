@@ -3,29 +3,49 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/debut_dark"
-    android:orientation="vertical"
-    android:padding="@dimen/content_space" >
+    android:orientation="vertical" >
 
     <TextView
         style="@style/Text.Title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:padding="@dimen/content_space"
         android:text="Your photo strips" />
 
-    <ListView
-        android:id="@+id/activity_dashboard_lv_requests"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginBottom="@dimen/content_space"
-        android:layout_weight="1" />
+        android:layout_weight="1" >
 
-    <Button
-        android:id="@+id/activity_dashboard_btn_new"
-        style="@style/ColorButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="Start a new photo strip!" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+            <com.viewpagerindicator.TitlePageIndicator
+                android:id="@+id/activity_dashboard_vpi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/activity_dashboard_vp"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" >
+            </android.support.v4.view.ViewPager>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/activity_dashboard_btn_new"
+            style="@style/ColorButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="-3dp"
+            android:text="Start a new photo strip!" />
+    </RelativeLayout>
 
 </LinearLayout>

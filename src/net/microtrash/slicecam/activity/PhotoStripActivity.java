@@ -27,7 +27,7 @@ public class PhotoStripActivity extends Activity implements OnImageSavedListener
 	private ProgressbarPopup progressDialog;
 	private String compositionId;
 	private ArrayList<String> allFilenames;
-	private ArrayList<String> allFilepaths;
+	
 	private LinearLayout sliceContainer;
 	private ImageSaver imageSaver;
 
@@ -44,33 +44,38 @@ public class PhotoStripActivity extends Activity implements OnImageSavedListener
 
 			@Override
 			public void onClick(View v) {
-
+				
 			}
 		});
 
 		compositionId = getIntent().getStringExtra(Static.EXTRA_COMPOSITION_ID);
 		// progressDialog = new ProgressbarPopup(this, v);
 		allFilenames = getIntent().getStringArrayListExtra(Static.EXTRA_SLICE_FILENAMES);
-		allFilepaths = new ArrayList<String>();
+		ArrayList<String> allFilepaths = addImageViewsToContainer(sliceContainer, allFilenames);
+
+		Bitmap composition = ImageEffects.createComposition(this, allFilepaths);
+		imageSaver = new ImageSaver(this);
+		imageSaver.saveImageAsync(composition, "compositions", Static.createCompositionFilename(compositionId), this);
+	}
+
+	public static ArrayList<String> addImageViewsToContainer(LinearLayout sliceContainer, ArrayList<String> allFilenames) {
+		ArrayList<String> allFilepaths = new ArrayList<String>();
 		for (String filename : allFilenames) {
 
 			BitmapFactory.Options options = new BitmapFactory.Options();
-			String filepath = Globals.getAppRootDirectoryPath() + "/" + Static.SLICE_DIRECTORY_NAME + "/" + filename;
+			String filepath = Static.getSliceFilpath(filename);
 			allFilepaths.add(filepath);
 			File file = new File(filepath);
-			log("filepath: " + filepath + " exists: " + file.exists());
+			Log.v("addImageViewsToContainer", "filepath: " + filepath + " exists: " + file.exists());
 			if (file.exists()) {
 				Bitmap bmpSlice = BitmapFactory.decodeFile(filepath, options);
 
-				ImageView iv = new ImageView(this);
+				ImageView iv = new ImageView(sliceContainer.getContext());
 				iv.setImageBitmap(bmpSlice);
 				sliceContainer.addView(iv, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 			}
 		}
-
-		Bitmap composition = ImageEffects.createComposition(this, allFilepaths);
-		imageSaver = new ImageSaver(this);
-		imageSaver.saveImageAsync(composition, "compositions", "composition_" + compositionId, this);
+		return allFilepaths;
 	}
 
 	private void log(String string) {

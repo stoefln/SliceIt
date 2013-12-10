@@ -2,14 +2,12 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/debut_dark"
     android:fillViewport="true" >
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#fff" >
-
-        <!-- Header  Starts -->
+        android:layout_height="wrap_content" >
 
         <LinearLayout
             android:id="@+id/header"
@@ -22,21 +20,20 @@
             <!-- Logo Start -->
 
             <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginBottom="@dimen/content_space"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="@dimen/content_space"
                 android:src="@drawable/ic_launcher" />
             <!-- Logo Ends -->
 
             <TextView
+                style="@style/Text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:text="SliceCam is a photo app, which allowes you to create funky photo-strips with your friends." />
         </LinearLayout>
-        <!-- Header Ends -->
-
 
         <!-- Registration Form -->
 
@@ -49,63 +46,54 @@
 
             <!-- Full Name Label -->
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Username"
-                android:textColor="#372c24" />
-
             <EditText
                 android:id="@+id/tbUsername"
+                style="@style/EditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/content_space"
                 android:layout_marginTop="5dip"
+                android:hint="Username"
                 android:singleLine="true" />
-            <!-- Email Label -->
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Email"
-                android:textColor="#372c24" />
+            <!-- Email Label -->
 
             <EditText
                 android:id="@+id/tbEmail"
+                style="@style/EditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/content_space"
                 android:layout_marginTop="5dip"
+                android:hint="E-Mail address"
                 android:inputType="textEmailAddress"
                 android:singleLine="true" />
 
             <!-- Password Label -->
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Password"
-                android:textColor="#372c24" />
-
             <EditText
                 android:id="@+id/tbPassword"
+                style="@style/EditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dip"
+                android:hint="Password"
                 android:password="true"
                 android:singleLine="true" />
+
             <!-- Register Button -->
 
             <TextView
                 android:id="@+id/tvError"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Error occured"
                 android:gravity="center_horizontal"
-                android:textColor="#AA00AA" />
+                android:text="Error occured"
+                android:textColor="@color/magenta" />
 
             <Button
-                android:id="@+id/bRegister"
+                android:id="@+id/bLogin"
+                style="@style/ColorButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dip"
@@ -113,14 +101,14 @@
             <!-- Link to Login Screen -->
 
             <TextView
-                android:id="@+id/link_to_login"
+                android:id="@+id/activity_register_tv_login"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="40dip"
-                android:layout_marginTop="40dip"
+                android:layout_marginTop="@dimen/content_space"
                 android:gravity="center"
                 android:text="Already have an account? Login here!"
-                android:textColor="#025f7c"
+                android:textColor="@color/magenta"
                 android:textSize="@dimen/content_space" />
         </LinearLayout>
         <!-- Registration Form Ends -->

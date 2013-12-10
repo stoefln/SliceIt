@@ -1,7 +1,9 @@
 package net.microtrash.slicecam.dialog;
 
 import net.microtrash.slicecam.R;
+import net.microtrash.slicecam.activity.LoginActivity;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
@@ -44,6 +46,10 @@ public class ProgressbarPopup extends PopupWindow {
 		rotateAnim = AnimationUtils.loadAnimation(context, R.anim.rotate);
 		rotateAnim.setRepeatCount(Integer.MAX_VALUE);
 		spinner.startAnimation(rotateAnim);
+	}
+
+	public ProgressbarPopup(Activity activity) {
+		this(activity, activity.findViewById(android.R.id.content));
 	}
 
 	@Override

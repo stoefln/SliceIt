@@ -4,7 +4,7 @@
     <color name="gui_main_color">#222222</color>
     <color name="test_color">#FF00FF</color>
     <color name="sep_thick">#FFFFFF</color>
-    <color name="dialog_background">#99000000</color>
+    <color name="dialog_background">#AA000000</color>
     <color name="sep_thin">#66FFFFFF</color>
 	<color name="yellow">#ecd078</color>
 	<color name="orange">#d95b43</color>

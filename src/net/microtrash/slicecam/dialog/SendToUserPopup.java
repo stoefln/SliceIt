@@ -44,17 +44,17 @@ public class SendToUserPopup extends PopupWindow {
 
 	private GridView gridView;
 
-	private String sliceId;
-
 	private LayoutInflater inflater;
 
 	private SendToUserPopupListener listener;
 
-	public SendToUserPopup(Context context, View parentView, String sliceId, SendToUserPopupListener listener) {
+	private ParseObject slice;
+
+	public SendToUserPopup(Context context, View parentView, ParseObject sliceObject, SendToUserPopupListener listener) {
 		super(context);
 
 		this.parentView = parentView;
-		this.sliceId = sliceId;
+		this.slice = sliceObject;
 		this.listener = listener;
 
 		inflater = LayoutInflater.from(context);
@@ -72,25 +72,21 @@ public class SendToUserPopup extends PopupWindow {
 
 	}
 
-	private void updateComposition(String sliceId, final ParseUser user) {
-		ParseQuery<ParseObject> query = ParseQuery.getQuery("Slice");
-
-		// Retrieve the object by id
-		query.getInBackground(sliceId, new GetCallback<ParseObject>() {
-			public void done(ParseObject slice, ParseException e) {
-				if (e == null) {
-					ParseObject composition = (ParseObject) slice.get(Static.FIELD_COMPOSITION);
-					composition.put(Static.FIELD_SEND_TO_USER, user);
-					composition.saveInBackground(new SaveCallback() {
-
-						@Override
-						public void done(ParseException arg0) {
-							compositionUpdated(user);
-						}
-					});
-				}
-			}
-		});
+	private void updateComposition(ParseObject slice, final ParseUser user) {
+		/*
+		 * ParseQuery<ParseObject> query = ParseQuery.getQuery("Slice");
+		 * 
+		 * // Retrieve the object by id
+		 * query.getInBackground(slice.getObjectId(), new
+		 * GetCallback<ParseObject>() { public void done(ParseObject slice,
+		 * ParseException e) { if (e == null) { ParseObject composition =
+		 * (ParseObject) slice.get(Static.FIELD_COMPOSITION);
+		 * composition.put(Static.FIELD_SEND_TO_USER, user);
+		 * composition.saveInBackground(new SaveCallback() {
+		 * 
+		 * @Override public void done(ParseException arg0) {
+		 * compositionUpdated(user); } }); } } });
+		 */
 
 	}
 
@@ -114,20 +110,18 @@ public class SendToUserPopup extends PopupWindow {
 
 	public void sendToUser(final ParseUser user) {
 		show();
-
 		progressDialog.show("sending your photo\nto " + user.getUsername());
-
+		updateSlice(slice, user);
+		
 		ParseQuery userQuery = ParseUser.getQuery();
 		userQuery.whereEqualTo("username", user.getUsername());
 		Log.v(TAG, "Send push to " + user.getUsername());
+
 		// Find devices associated with these users
 		ParseQuery<ParseInstallation> pushQuery = ParseInstallation.getQuery();
 		pushQuery.whereMatchesQuery("user", userQuery);
 		pushQuery.whereEqualTo("deviceType", "android");
 		pushQuery.whereEqualTo("channels", Static.PUSH_DEFAULT_CHANNEL_KEY);
-
-		updateComposition(sliceId, user);
-
 		// Send push notification to query
 		ParsePush push = new ParsePush();
 		push.setQuery(pushQuery);
@@ -146,7 +140,20 @@ public class SendToUserPopup extends PopupWindow {
 		});
 	}
 
-	private void compositionUpdated(ParseUser user) {
+	private void updateSlice(final ParseObject slice, final ParseUser user) {
+		slice.put(Static.FIELD_SEND_TO_USER, user);
+		slice.saveInBackground(new SaveCallback() {
+
+			@Override
+			public void done(ParseException arg0) {
+				onSliceUpdated(slice, user);
+			}
+
+		});
+	}
+
+	private void onSliceUpdated(ParseObject slice, final ParseUser user) {
+		
 
 	}
 
@@ -158,7 +165,7 @@ public class SendToUserPopup extends PopupWindow {
 
 			@Override
 			public void onClick(View v) {
-				ParseUser user = (ParseUser) v.getTag(R.id.tag_user);
+				ParseUser user = (ParseUser) v.getTag(R.id.tag_slice);
 				sendToUser(user);
 
 			}
@@ -200,7 +207,7 @@ public class SendToUserPopup extends PopupWindow {
 			}
 
 			ParseUser user = list.get(position);
-			itemView.setTag(R.id.tag_user, user);
+			itemView.setTag(R.id.tag_slice, user);
 
 			TextView username = (TextView) itemView.findViewById(R.id.item_user_username);
 			username.setText(user.getUsername());

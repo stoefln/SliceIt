@@ -1,32 +1,30 @@
 package net.microtrash.slicecam.activity;
 
-import java.util.Date;
-import java.util.List;
-
 import net.microtrash.slicecam.R;
-import net.microtrash.slicecam.Static;
 import net.microtrash.slicecam.dialog.ProgressbarPopup;
-import android.app.Activity;
+import net.microtrash.slicecam.fragment.CompositionsFinishedFragment;
+import net.microtrash.slicecam.fragment.CompositionsInProgressFragment;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.ListView;
-import android.widget.TextView;
 
-import com.parse.FindCallback;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
+import com.parse.ParseUser;
+import com.viewpagerindicator.TitlePageIndicator;
 
-public class DashboardActivity extends Activity {
+public class DashboardActivity extends FragmentActivity {
 
 	private ProgressbarPopup progressDialog;
-	private ListView listView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -40,114 +38,70 @@ public class DashboardActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				startCameraActivity(null);
+				CameraActivity.start(null, DashboardActivity.this);
 			}
 		});
 
-		listView = (ListView) v.findViewById(R.id.activity_dashboard_lv_requests);
+		ViewPager pager = (ViewPager) findViewById(R.id.activity_dashboard_vp);
+		pager.setAdapter(new DashboardAdapter(getSupportFragmentManager()));
 
-		progressDialog = new ProgressbarPopup(this, v);
+		TitlePageIndicator titleIndicator = (TitlePageIndicator) findViewById(R.id.activity_dashboard_vpi);
+		titleIndicator.setViewPager(pager);
 	}
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-		progressDialog.show("Loading photo strips...");
-		ParseQuery<ParseObject> query = ParseQuery.getQuery("Composition");
-		// query.whereEqualTo("playerName", "Dan Stemkoski");
-		query.findInBackground(new FindCallback<ParseObject>() {
-			public void done(List<ParseObject> compositions, ParseException e) {
-				if (e == null) {
-					Log.d("score", "Retrieved " + compositions.size() + " scores");
-					CompositionAdapter adapter = new CompositionAdapter(compositions);
-					listView.setAdapter(adapter);
-					progressDialog.dismiss();
-				} else {
-					Log.d("score", "Error: " + e.getMessage());
-				}
-			}
-		});
-	}
+	public static class DashboardAdapter extends FragmentPagerAdapter {
+		private static final CharSequence[] TITLES = {"In Progress", "Finished"};
 
-	private void startCameraActivity(String compositionId) {
-		Intent i = new Intent(getApplicationContext(), CameraActivity.class);
-		if (compositionId != null) {
-			i.putExtra(Static.EXTRA_COMPOSITION_ID, compositionId);
-		}
-		startActivity(i);
-	}
-
-	private void onCompositionSelected(ParseObject composition) {
-		startCameraActivity(composition.getObjectId());
-
-	}
-
-	public class CompositionAdapter extends BaseAdapter {
-
-		private List<ParseObject> list;
-
-		private OnClickListener onClickListener = new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				ParseObject composition = (ParseObject) v.getTag(R.id.tag_user);
-				onCompositionSelected(composition);
-
-			}
-
-		};
-
-		public CompositionAdapter(List<ParseObject> objects) {
-			list = objects;
-
+		public DashboardAdapter(FragmentManager fragmentManager) {
+			super(fragmentManager);
 		}
 
 		@Override
 		public int getCount() {
-			return list.size();
+			return 2;
 		}
 
 		@Override
-		public Object getItem(int position) {
+		public CharSequence getPageTitle(int position) {
+			return TITLES[position];
+		}
+
+		@Override
+		public Fragment getItem(int position) {
+			switch (position) {
+			case 0:
+				return CompositionsInProgressFragment.create();
+			case 1:
+				return CompositionsFinishedFragment.create();
+
+			}
 			return null;
 		}
+	}
 
-		@Override
-		public long getItemId(int position) {
-			return position;
-		}
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.menu_dashboard, menu);
+	    return super.onCreateOptionsMenu(menu);
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    // Handle presses on the action bar items
+	    switch (item.getItemId()) {
+	        case R.id.action_logout:
+	        	ParseUser.logOut();
+	        	RegisterActivity.start(this);
+	            return true;
+	       
+	        default:
+	            return super.onOptionsItemSelected(item);
+	    }
+	}
 
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-
-			final View itemView;
-
-			if (convertView == null) {
-				itemView = DashboardActivity.this.getLayoutInflater().inflate(R.layout.item_composition, parent, false);
-				itemView.setLayoutParams(new ListView.LayoutParams(ListView.LayoutParams.WRAP_CONTENT,
-						ListView.LayoutParams.WRAP_CONTENT));
-			} else {
-				itemView = convertView;
-			}
-
-			
-
-			TextView tvUsername = (TextView) itemView.findViewById(R.id.item_composition_username);
-			TextView tvSlice = (TextView) itemView.findViewById(R.id.item_composition_slice);
-			Button btContinue = (Button) itemView.findViewById(R.id.item_composition_bt_continue);
-			ParseObject object = list.get(position);
-			btContinue.setTag(R.id.tag_user, object);
-			btContinue.setOnClickListener(onClickListener);
-			
-			tvUsername.setText(object.getString(Static.FIELD_CREATED_BY));
-			Date date = object.getDate("createdAt");
-			if (date != null) {
-				tvSlice.setText(date.toString());
-			}
-			tvSlice.setText("step: " + (object.getInt(Static.FIELD_LAST_STEP) + 1) + "/4 \t ID: "
-					+ object.getObjectId());
-			return itemView;
-		}
-
+	public static void start(Context c) {
+		Intent i = new Intent(c, DashboardActivity.class);
+		c.startActivity(i);
 	}
 }

@@ -8,6 +8,7 @@ import java.util.List;
 
 import net.microtrash.slicecam.lib.Profiler;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.hardware.Camera;
@@ -313,6 +314,7 @@ public class CameraController implements Callback {
 
 	}
 
+	@SuppressLint("InlinedApi")
 	private void setupAndStartPreview() throws IOException {
 		Profiler.measure("setupAndStartPreview()");
 		try {

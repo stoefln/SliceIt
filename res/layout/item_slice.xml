@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" >
+
+    <net.microtrash.slicecam.view.ProportionalBitmapView
+        android:id="@+id/item_composition_iv_slice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="2dp"
+        android:src="@drawable/placeholder_16_9" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#66000000"
+        android:padding="20dp" >
+
+        <TextView
+            android:id="@+id/item_composition_label"
+            style="@style/Text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="sent to you by:" />
+
+        <TextView
+            android:id="@+id/item_composition_username"
+            style="@style/Text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/item_composition_label"
+            android:textSize="23sp"
+            android:text="username" />
+
+        <TextView
+            android:id="@+id/item_composition_slice"
+            style="@style/Text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/item_composition_username"
+            android:text="slice" />
+    </RelativeLayout>
+
+    <net.microtrash.slicecam.view.TextButton
+        android:id="@+id/item_composition_bt_continue"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="-10dp"
+        android:gravity="center"
+        android:text="Continue..."
+        android:textColor="#FFF"
+        android:textSize="12sp" />
+
+</RelativeLayout>

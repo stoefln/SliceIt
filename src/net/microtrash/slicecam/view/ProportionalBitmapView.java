@@ -8,7 +8,7 @@ import android.util.AttributeSet;
 public class ProportionalBitmapView extends android.widget.ImageView {
 
 
-	private double mAspectRatio = 1;
+	private double mAspectRatio = 16f/9f;
 	
 
 	public ProportionalBitmapView(Context _context) {
@@ -44,9 +44,6 @@ public class ProportionalBitmapView extends android.widget.ImageView {
 		int width = MeasureSpec.getSize(_widthMeasureSpec);
 		
 		setMeasuredDimension(width, (int) (width / mAspectRatio));
-
-		
-
 	}
 
 }

@@ -138,6 +138,7 @@ public class IconButton extends View {
 		}
 		this.drawable = a.getDrawable(R.styleable.IconButton_icon);
 		if(drawable == null){
+			// hack: why is this not working?!
 			drawable = getResources().getDrawable(R.drawable.camera);
 		}
 		// this.bitmap = drawableToBitmap(drawable);

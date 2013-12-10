@@ -7,6 +7,23 @@
     android:orientation="vertical"
     android:padding="@dimen/content_space" >
 
+    <TextView
+        android:id="@+id/activity_photostrip_tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="Photostrip done!"
+        android:textColor="#FFF"
+        android:textSize="28sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="You wanna send it to your friend?"
+        android:textColor="#CCC"
+        android:textSize="14sp" />
+
     <LinearLayout
         android:id="@+id/activity_photostrip_ll_composition"
         android:layout_width="match_parent"
