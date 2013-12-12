@@ -4,9 +4,9 @@ import java.util.List;
 
 import net.microtrash.slicecam.R;
 import net.microtrash.slicecam.Static;
+import net.microtrash.slicecam.lib.PushService;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -18,12 +18,8 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
-import com.parse.GetCallback;
 import com.parse.ParseException;
-import com.parse.ParseInstallation;
 import com.parse.ParseObject;
-import com.parse.ParsePush;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.parse.SendCallback;
@@ -110,27 +106,15 @@ public class SendToUserPopup extends PopupWindow {
 
 	public void sendToUser(final ParseUser user) {
 		show();
-		progressDialog.show("sending your photo\nto " + user.getUsername());
+		String myUsername = ParseUser.getCurrentUser().getUsername();
+		progressDialog.showAndDismiss("sending your photo slice\nto " + user.getUsername(), 3000, null);
 		updateSlice(slice, user);
-		
-		ParseQuery userQuery = ParseUser.getQuery();
-		userQuery.whereEqualTo("username", user.getUsername());
-		Log.v(TAG, "Send push to " + user.getUsername());
 
-		// Find devices associated with these users
-		ParseQuery<ParseInstallation> pushQuery = ParseInstallation.getQuery();
-		pushQuery.whereMatchesQuery("user", userQuery);
-		pushQuery.whereEqualTo("deviceType", "android");
-		pushQuery.whereEqualTo("channels", Static.PUSH_DEFAULT_CHANNEL_KEY);
-		// Send push notification to query
-		ParsePush push = new ParsePush();
-		push.setQuery(pushQuery);
-		push.setMessage(ParseUser.getCurrentUser().getUsername() + " sent you a photo slice!");
-		push.sendInBackground(new SendCallback() {
+		PushService.sendPushMessage(user.getUsername(), myUsername + " sent you a photo slice!", new SendCallback() {
 
 			@Override
 			public void done(ParseException arg0) {
-				progressDialog.dismiss();
+				//progressDialog.dismiss();
 				try {
 					dismiss();
 				} catch (Exception e) {
@@ -138,6 +122,7 @@ public class SendToUserPopup extends PopupWindow {
 				listener.onNotificationSent(user);
 			}
 		});
+
 	}
 
 	private void updateSlice(final ParseObject slice, final ParseUser user) {
@@ -153,7 +138,6 @@ public class SendToUserPopup extends PopupWindow {
 	}
 
 	private void onSliceUpdated(ParseObject slice, final ParseUser user) {
-		
 
 	}
 

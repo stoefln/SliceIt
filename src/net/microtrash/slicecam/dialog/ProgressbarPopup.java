@@ -1,7 +1,6 @@
 package net.microtrash.slicecam.dialog;
 
 import net.microtrash.slicecam.R;
-import net.microtrash.slicecam.activity.LoginActivity;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -93,6 +92,22 @@ public class ProgressbarPopup extends PopupWindow {
 			}
 		}, 500);
 
+	}
+
+	
+	public void showAndDismiss(String message, int durationInMilliseconds, final OnDialogClosedListener listener) {
+		show(message);
+		parentView.postDelayed(new Runnable() {
+
+			@Override
+			public void run() {
+				dismiss();
+				if(listener != null){
+					listener.onDialogClosed(true);
+				}
+			}
+		}, durationInMilliseconds);
+		
 	}
 
 }

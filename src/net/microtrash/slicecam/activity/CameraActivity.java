@@ -103,18 +103,21 @@ public class CameraActivity extends FragmentActivity implements BitmapDecodingLi
 				cameraController.focus();
 			}
 		});
-		cameraView.postDelayed(new Runnable() {
-			
+		/*cameraView.postDelayed(new Runnable() {
+
 			@Override
 			public void run() {
 				cameraController = new CameraController(CameraActivity.this, 16d / 9d, cameraView);
 				cameraController.start();
 			}
 		}, 500);
-
+*/
+		cameraController = new CameraController(CameraActivity.this, 16d / 9d, cameraView);
+		//cameraController.start();
+		
 		mask = (PreviewMask) findViewById(R.id.mask);
 		mask.setRatio(ratio);
-		
+
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 		sessionNumber = preferences.getInt("session_num", 0);
 		sessionNumber++;
@@ -149,9 +152,9 @@ public class CameraActivity extends FragmentActivity implements BitmapDecodingLi
 
 		progressDialog = new ProgressbarPopup(this, shutterLayer);
 		if (getIntent().getExtras() == null) {
-			
-		}else{
-			
+
+		} else {
+
 			loadCurrentComposition(getIntent().getExtras().getString(Static.EXTRA_COMPOSITION_ID));
 			progressDialog.show("loading last photo slice...");
 		}
@@ -162,8 +165,9 @@ public class CameraActivity extends FragmentActivity implements BitmapDecodingLi
 		compositionQuery.whereEqualTo("objectId", compositionId);
 
 		ParseQuery<ParseObject> query2 = ParseQuery.getQuery("Slice");
-		query2.whereMatchesQuery("composition", compositionQuery);
-		query2.include("composition");
+		query2.whereMatchesQuery(Static.FIELD_COMPOSITION, compositionQuery);
+		query2.include(Static.FIELD_COMPOSITION);
+		query2.include(Static.FIELD_CREATED_BY);
 		query2.findInBackground(new FindCallback<ParseObject>() {
 
 			public void done(List<ParseObject> slices, ParseException e) {
@@ -261,10 +265,10 @@ public class CameraActivity extends FragmentActivity implements BitmapDecodingLi
 
 		m.postScale((float) (1d / downScaling), (float) (1d / downScaling));
 		c.drawBitmap(slicedBitmap, m, new Paint(Paint.ANTI_ALIAS_FLAG));
-		
-		if(currentComposition == null){
+
+		if (currentComposition == null) {
 			createNewCompositionAndSaveImageToSd();
-		}else{
+		} else {
 			saveImageToSd();
 		}
 
@@ -282,26 +286,25 @@ public class CameraActivity extends FragmentActivity implements BitmapDecodingLi
 
 	}
 
-	
-
-	private void createNewCompositionAndSaveImageToSd(){
+	private void createNewCompositionAndSaveImageToSd() {
 		Log.v(TAG, "creating new composition");
 		currentComposition = new ParseObject("Composition");
 		currentComposition.put("createdBy", ParseUser.getCurrentUser().getUsername());
 		currentComposition.saveInBackground(new SaveCallback() {
-			
+
 			@Override
 			public void done(ParseException arg0) {
 				saveImageToSd();
 			}
 		});
 	}
-	
+
 	protected void saveImageToSd() {
-		log("onCompositionSaved(): "+getCurrentComposition().getObjectId());
-		imageSaver.saveImageAsync(freshImage, "slices", Static.createSliceFilename(getCurrentComposition().getObjectId(), step), this);
+		log("onCompositionSaved(): " + getCurrentComposition().getObjectId());
+		imageSaver.saveImageAsync(freshImage, "slices",
+				Static.createSliceFilename(getCurrentComposition().getObjectId(), step), this);
 	}
-	
+
 	@Override
 	public void onImageSaved(String filepath) {
 		if (filepath.contains("slice_")) {
@@ -320,8 +323,6 @@ public class CameraActivity extends FragmentActivity implements BitmapDecodingLi
 		freshSliceObject = new ParseObject("Slice");
 
 		final SaveCallback onImageUploaded = new SaveCallback() {
-
-			
 
 			@Override
 			public void done(ParseException ex) {
@@ -352,7 +353,7 @@ public class CameraActivity extends FragmentActivity implements BitmapDecodingLi
 
 		upload.saveInBackground(onImageUploaded);
 	}
-	
+
 	final SaveCallback onSliceObjectUploaded = new SaveCallback() {
 		@Override
 		public void done(final ParseException ex) {
@@ -371,7 +372,7 @@ public class CameraActivity extends FragmentActivity implements BitmapDecodingLi
 								progressDialog.dismiss();
 								sendToUserPopup.showUserSelection(users);
 							} else {
-								
+
 								// Something went wrong -> show "retry"
 								// button.
 							}
@@ -379,19 +380,14 @@ public class CameraActivity extends FragmentActivity implements BitmapDecodingLi
 					});
 				} else {
 					allSlices.add(freshSliceObject);
-					if (step >= Static.MAX_STEPS) {
-						Intent intent = new Intent(getApplicationContext(), PhotoStripActivity.class);
-						intent.putExtra(Static.EXTRA_COMPOSITION_ID, currentComposition.getObjectId());
-						intent.putStringArrayListExtra(Static.EXTRA_SLICE_FILENAMES, getSliceFilenames(allSlices));
-						startActivity(intent);
-						
+					ParseUser collaborator = lastSlice.getParseUser(Static.FIELD_CREATED_BY);
+					if (step >= Static.MAX_STEP) {
+						PhotoStripActivity.start(CameraActivity.this, currentComposition.getObjectId(),
+								getSliceFilenames(allSlices), collaborator
+										.getUsername());
+						finish();
 					} else {
-
-						lastSlice.getParseUser("createdBy").fetchIfNeededInBackground(new GetCallback<ParseObject>() {
-							public void done(ParseObject user, ParseException e) {
-								sendToUserPopup.sendToUser((ParseUser) user);
-							}
-						});
+						sendToUserPopup.sendToUser(collaborator);
 					}
 
 				}

@@ -25,8 +25,10 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -72,7 +74,7 @@ public class CompositionsFinishedFragment extends Fragment {
 		super.onResume();
 
 		ParseQuery<ParseObject> compositionQuery = ParseQuery.getQuery("Composition");
-		compositionQuery.whereGreaterThan(Static.FIELD_LAST_STEP, Static.MAX_STEPS - 1);
+		compositionQuery.whereGreaterThan(Static.FIELD_LAST_STEP, Static.MAX_STEP - 1);
 
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("Slice");
 		query.whereMatchesQuery(Static.FIELD_COMPOSITION, compositionQuery);
@@ -162,7 +164,7 @@ public class CompositionsFinishedFragment extends Fragment {
 
 	}
 
-	public class CompositionAdapter extends BaseAdapter {
+	public class CompositionAdapter extends BaseAdapter implements OnClickListener {
 
 		private List<ParseObject> list;
 
@@ -193,8 +195,10 @@ public class CompositionsFinishedFragment extends Fragment {
 
 			if (convertView == null) {
 				itemView = inflater.inflate(R.layout.item_composition, parent, false);
-				itemView.setLayoutParams(new ListView.LayoutParams(ListView.LayoutParams.WRAP_CONTENT,
-						ListView.LayoutParams.WRAP_CONTENT));
+				LayoutParams params = new ListView.LayoutParams(ListView.LayoutParams.MATCH_PARENT,
+						ListView.LayoutParams.WRAP_CONTENT);
+				
+				itemView.setLayoutParams(params);
 			} else {
 				itemView = convertView;
 			}
@@ -209,9 +213,20 @@ public class CompositionsFinishedFragment extends Fragment {
 				BitmapFactory.Options options = new BitmapFactory.Options();
 				Bitmap bmpComposition = BitmapFactory.decodeFile(filepath, options);
 				iv.setImageBitmap(bmpComposition);
+				iv.setTag(filepath);
+				iv.setOnClickListener(this);
 			}
 
 			return itemView;
+		}
+
+		@Override
+		public void onClick(View v) {
+			String filepath = (String) v.getTag();
+			Intent intent = new Intent();
+			intent.setAction(Intent.ACTION_VIEW);
+			intent.setDataAndType(Uri.parse("file://" +filepath), "image/*");
+			startActivity(intent);
 		}
 
 	}

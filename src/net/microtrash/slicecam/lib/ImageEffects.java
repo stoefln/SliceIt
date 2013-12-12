@@ -16,6 +16,8 @@ import android.util.Log;
 
 public class ImageEffects {
 
+	private static final String TAG = "ImageEffects";
+
 	public static Bitmap fastblur(Bitmap sentBitmap, int radius) {
 		return fastblur(sentBitmap, radius, sentBitmap.getWidth(), sentBitmap.getHeight());
 	}
@@ -256,15 +258,16 @@ public class ImageEffects {
 		Canvas canvas = null;
 		Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		Matrix matrix = new Matrix();
-		for (String filename : imageFilenpaths) {
+		for (String filepath : imageFilenpaths) {
 			BitmapFactory.Options options = new BitmapFactory.Options();
 			// options.inJustDecodeBounds = true;
-			Bitmap bitmap = BitmapFactory.decodeFile(filename, options);
+			Bitmap bitmap = BitmapFactory.decodeFile(filepath, options);
 			if (mainImage == null) {
 				mainImage = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight() * imageFilenpaths.size(),
 						Bitmap.Config.ARGB_8888);
 				canvas = new Canvas(mainImage);
 			}
+			Log.v(TAG, "imagepath: "+filepath);
 			canvas.drawBitmap(bitmap, matrix, paint);
 			matrix.postTranslate(0, bitmap.getHeight());
 			bitmap = null;

@@ -1,10 +1,12 @@
 package net.microtrash.slicecam.fragment;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import net.microtrash.slicecam.ImageSaver;
 import net.microtrash.slicecam.R;
 import net.microtrash.slicecam.Static;
 import net.microtrash.slicecam.activity.CameraActivity;
@@ -38,6 +40,7 @@ public class CompositionsInProgressFragment extends Fragment {
 	private ListView listView;
 	private ProgressbarPopup progressDialog;
 	private LayoutInflater inflater;
+	protected static final String TAG = "CompositionsInProgressFragment";
 
 	public static CompositionsInProgressFragment create() {
 
@@ -63,7 +66,7 @@ public class CompositionsInProgressFragment extends Fragment {
 		super.onResume();
 		progressDialog.show("Loading photo strips...");
 		ParseQuery<ParseObject> compositionQuery = ParseQuery.getQuery("Composition");
-		compositionQuery.whereLessThan(Static.FIELD_LAST_STEP, Static.MAX_STEPS);
+		compositionQuery.whereLessThan(Static.FIELD_LAST_STEP, Static.MAX_STEP);
 
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("Slice");
 		query.whereMatchesQuery(Static.FIELD_COMPOSITION, compositionQuery);
@@ -74,8 +77,10 @@ public class CompositionsInProgressFragment extends Fragment {
 		query.findInBackground(new FindCallback<ParseObject>() {
 			public void done(List<ParseObject> slices, ParseException e) {
 				if (e == null) {
-					Log.d("score", "Retrieved " + slices.size() + " scores");
-					CompositionAdapter adapter = new CompositionAdapter(getUniqueSliceList(slices));
+					Log.d("score", "Retrieved " + slices.size() + " slices");
+					List<ParseObject> uniqueSliceList = getUniqueSliceList(slices);
+					
+					CompositionAdapter adapter = new CompositionAdapter(uniqueSliceList);
 					listView.setAdapter(adapter);
 					progressDialog.dismiss();
 				} else {
@@ -84,6 +89,8 @@ public class CompositionsInProgressFragment extends Fragment {
 			}
 		});
 	}
+
+
 
 	private List<ParseObject> getUniqueSliceList(List<ParseObject> slices) {
 		HashMap<String, ParseObject> sliceMap = new HashMap<String, ParseObject>();
@@ -105,6 +112,7 @@ public class CompositionsInProgressFragment extends Fragment {
 
 	public class CompositionAdapter extends BaseAdapter {
 
+	
 		private List<ParseObject> list;
 
 		private OnClickListener onClickListener = new OnClickListener() {
@@ -117,9 +125,11 @@ public class CompositionsInProgressFragment extends Fragment {
 
 		};
 
+		private ImageSaver imageSaver;
+
 		public CompositionAdapter(List<ParseObject> objects) {
 			list = objects;
-
+			imageSaver = new ImageSaver(getActivity());
 		}
 
 		@Override
@@ -160,27 +170,36 @@ public class CompositionsInProgressFragment extends Fragment {
 
 			final String compositionId = slice.getParseObject(Static.FIELD_COMPOSITION).getObjectId();
 			final String filename = Static.createSliceFilename(compositionId, slice.getInt(Static.FIELD_STEP));
-
-			ParseFile sliceFile = (ParseFile) slice.get(Static.FIELD_FILE);
-			sliceFile.getDataInBackground(new GetDataCallback() {
-				public void done(byte[] data, ParseException e) {
-					if (e == null) {
-						Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
-						/*
-						 * Bitmap blurredSlice = ImageEffects.fastblur(bmp, 100,
-						 * bmp.getWidth(), (int) (bmp.getHeight() * (1d -
-						 * 0.2)));
-						 */
-						ivImage.setImageBitmap(bmp);
-						// imageSaver.saveImageAsync(bmp,
-						// Static.SLICE_DIRECTORY_NAME, filename);
-
-					} else {
-						e.printStackTrace();
+			final String filepath = Static.getSliceFilpath(filename) + ".jpg";
+			
+			File f = new File(filepath);
+			if(f.exists()){
+				Log.v(TAG, "loading from disk: "+filepath);
+				Bitmap bmp = BitmapFactory.decodeFile(filepath);
+				ivImage.setImageBitmap(bmp);
+			}else{
+				Log.v(TAG, "loading from backend: "+filename);
+				ParseFile sliceFile = (ParseFile) slice.get(Static.FIELD_FILE);
+				sliceFile.getDataInBackground(new GetDataCallback() {
+					public void done(byte[] data, ParseException e) {
+						if (e == null) {
+							Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
+							
+							/*
+							 * Bitmap blurredSlice = ImageEffects.fastblur(bmp, 100,
+							 * bmp.getWidth(), (int) (bmp.getHeight() * (1d -
+							 * 0.2)));
+							 */
+							ivImage.setImageBitmap(bmp);
+							imageSaver.saveImageAsync(bmp, Static.SLICE_DIRECTORY_NAME, filename);
+						} else {
+							e.printStackTrace();
+						}
 					}
-				}
 
-			});
+				});
+			}
+	
 
 			tvUsername.setText(slice.getParseObject(Static.FIELD_CREATED_BY).getString(Static.FIELD_USERNAME));
 			Date date = slice.getDate("createdAt");
@@ -192,5 +211,7 @@ public class CompositionsInProgressFragment extends Fragment {
 		}
 
 	}
+	
+	
 
 }

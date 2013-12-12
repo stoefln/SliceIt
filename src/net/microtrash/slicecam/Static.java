@@ -5,8 +5,9 @@ import android.graphics.Bitmap;
 public class Static {
 
 	public static final String IMAGE_FILE_EXTENSION = "jpg";
-	// how many rounds will be played
-	public static final int MAX_STEPS = 4;
+	// how many rounds will be played (aka which round will finish the composition)
+	public static final int MAX_STEP = 3;
+	public static final String EXTRA_COLLABORATOR_USERNAME = "collaborator_username";
 	public static String PUSH_DEFAULT_CHANNEL_KEY = "push_default_channel";
 	public static String FIELD_SEND_TO_USER = "send_to_user";
 	public static String FIELD_COMPOSITION = "composition";
