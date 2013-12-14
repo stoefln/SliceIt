@@ -177,26 +177,18 @@ public class CameraActivity extends FragmentActivity implements BitmapDecodingLi
 						log("Loaded " + slices.size() + " slices");
 						lastSlice = slices.get(slices.size() - 1);
 
-						ParseFile sliceImage = (ParseFile) lastSlice.get(Static.FIELD_FILE);
-						sliceImage.getDataInBackground(new GetDataCallback() {
-							public void done(byte[] data, ParseException e) {
-								if (e == null) {
-									Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
-									Bitmap blurredSlice = ImageEffects.fastblur(bmp, 100, bmp.getWidth(),
-											(int) (bmp.getHeight() * (1d - 0.2)));
-									mask.addPreImage(blurredSlice);
-									step = lastSlice.getInt("step") + 1;
-									progressDialog.dismiss();
-									mask.setStep(step);
-									imageSaver.saveImageAsync(bmp, Static.SLICE_DIRECTORY_NAME,
-											Static.createSliceFilename(compositionId, step));
-									currentComposition = lastSlice.getParseObject("composition");
-								} else {
-									Log.d(TAG, "Error: " + e.getMessage());
-								}
-							}
-
-						});
+						String filepath = Static.getFullSliceFilepath(lastSlice);
+						Bitmap bmp = BitmapFactory.decodeFile(filepath);
+						Bitmap blurredSlice = ImageEffects.fastblur(bmp, 100, bmp.getWidth(),
+								(int) (bmp.getHeight() * (1d - 0.2)));
+						mask.addPreImage(blurredSlice);
+						step = lastSlice.getInt("step") + 1;
+						progressDialog.dismiss();
+						mask.setStep(step);
+						imageSaver.saveImageAsync(bmp, Static.SLICE_DIRECTORY_NAME,
+								Static.createSliceFilename(compositionId, step));
+						currentComposition = lastSlice.getParseObject("composition");
+				
 					} else {
 						log("No slices for composition " + compositionId + " found!");
 					}

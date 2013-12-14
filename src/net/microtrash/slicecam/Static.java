@@ -1,5 +1,7 @@
 package net.microtrash.slicecam;
 
+import com.parse.ParseObject;
+
 import android.graphics.Bitmap;
 
 public class Static {
@@ -36,6 +38,13 @@ public class Static {
 	
 	public static String getCompositionFilpath(String filename) {
 		return Globals.getAppRootDirectoryPath() + "/" + Static.COMPOSITION_DIRECTORY_NAME + "/" + filename;
+	}
+
+	public static String getFullSliceFilepath(ParseObject slice) {
+		final String compositionId = slice.getParseObject(Static.FIELD_COMPOSITION).getObjectId();
+		final String filename = Static.createSliceFilename(compositionId, slice.getInt(Static.FIELD_STEP));
+		String filepath = Static.getSliceFilpath(filename) + ".jpg";
+		return filepath;
 	}
 	
 }

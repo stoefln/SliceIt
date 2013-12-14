@@ -170,7 +170,7 @@ public class CompositionsInProgressFragment extends Fragment {
 
 			final String compositionId = slice.getParseObject(Static.FIELD_COMPOSITION).getObjectId();
 			final String filename = Static.createSliceFilename(compositionId, slice.getInt(Static.FIELD_STEP));
-			final String filepath = Static.getSliceFilpath(filename) + ".jpg";
+			final String filepath = Static.getFullSliceFilepath(slice);
 			
 			File f = new File(filepath);
 			if(f.exists()){
@@ -178,7 +178,7 @@ public class CompositionsInProgressFragment extends Fragment {
 				Bitmap bmp = BitmapFactory.decodeFile(filepath);
 				ivImage.setImageBitmap(bmp);
 			}else{
-				Log.v(TAG, "loading from backend: "+filename);
+				Log.v(TAG, "loading from backend: "+filepath);
 				ParseFile sliceFile = (ParseFile) slice.get(Static.FIELD_FILE);
 				sliceFile.getDataInBackground(new GetDataCallback() {
 					public void done(byte[] data, ParseException e) {
