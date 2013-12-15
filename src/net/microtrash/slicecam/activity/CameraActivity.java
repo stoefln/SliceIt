@@ -59,6 +59,8 @@ public class CameraActivity extends FragmentActivity implements BitmapDecodingLi
 	private static final String TAG = "MainActivity";
 
 	protected static final String TAG_SELECT_USER = "select_user";
+
+	private static final int SLICE_IMAGE_WIDTH = 1000;
 	private int sessionNumber;
 	private int step;
 	private IconButton shootButton;
@@ -75,9 +77,11 @@ public class CameraActivity extends FragmentActivity implements BitmapDecodingLi
 
 	private ProgressbarPopup progressDialog;
 
-	private Bitmap freshImage;
+	//private Bitmap freshImage;
 
 	private ParseObject freshSliceObject;
+
+	private Bitmap slicedBitmap;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -179,9 +183,9 @@ public class CameraActivity extends FragmentActivity implements BitmapDecodingLi
 
 						String filepath = Static.getFullSliceFilepath(lastSlice);
 						Bitmap bmp = BitmapFactory.decodeFile(filepath);
-						Bitmap blurredSlice = ImageEffects.fastblur(bmp, 100, bmp.getWidth(),
-								(int) (bmp.getHeight() * (1d - 0.2)));
-						mask.addPreImage(blurredSlice);
+						/*Bitmap blurredSlice = ImageEffects.fastblur(bmp, 100, bmp.getWidth(),
+								(int) (bmp.getHeight() * (1d - 0.2)));*/
+						mask.setSlice(lastSlice);
 						step = lastSlice.getInt("step") + 1;
 						progressDialog.dismiss();
 						mask.setStep(step);
@@ -233,22 +237,24 @@ public class CameraActivity extends FragmentActivity implements BitmapDecodingLi
 	@Override
 	public void onBitmapDecoded(Bitmap bitmap, Exception exception, String message) {
 
-		int sliceWidth = bitmap.getHeight();
+		int sliceWidth = SLICE_IMAGE_WIDTH;
 		int sliceHeight = (int) (sliceWidth / ratio);
-		Log.v(TAG, "sliceHeight: " + sliceWidth + " sliceWidth: " + sliceWidth);
-		Bitmap slicedBitmap = Bitmap.createBitmap(sliceWidth, sliceHeight, Bitmap.Config.ARGB_8888);
+		//Log.v(TAG, "sliceHeight: " + sliceWidth + " sliceWidth: " + sliceWidth);
+		slicedBitmap = Bitmap.createBitmap(sliceWidth, sliceHeight, Bitmap.Config.ARGB_8888);
 		Matrix m = new Matrix();
-		int topOffset = (bitmap.getWidth() - sliceHeight) / 2;
-
+		int topOffset = (int) ((double) bitmap.getHeight() / ratio);
+		float s = (float) sliceWidth / (float) bitmap.getHeight();
+		Log.v(TAG, "scale: " + s );
+		m.postScale(s, s);
 		m.postRotate(90, 0, 0);
-		m.postTranslate(sliceWidth, -topOffset);
+		m.postTranslate((float) bitmap.getHeight() * s, -  (float) topOffset * s);
 		Canvas c = new Canvas(slicedBitmap);
 		c.drawColor(getResources().getColor(R.color.test_color));
 
 		c.drawBitmap(bitmap, m, new Paint(Paint.ANTI_ALIAS_FLAG));
 		// imageSaver.saveImageAsync(slicedBitmap, "slice_L_" + shotNumber);
 
-		double downScaling = 5;
+		/*double downScaling = 5;
 		double visibleOfSlice = 0.2;
 		freshImage = Bitmap.createBitmap((int) ((double) sliceWidth / downScaling),
 				(int) ((double) sliceHeight / downScaling), Bitmap.Config.ARGB_8888);
@@ -257,7 +263,7 @@ public class CameraActivity extends FragmentActivity implements BitmapDecodingLi
 
 		m.postScale((float) (1d / downScaling), (float) (1d / downScaling));
 		c.drawBitmap(slicedBitmap, m, new Paint(Paint.ANTI_ALIAS_FLAG));
-
+*/
 		if (currentComposition == null) {
 			createNewCompositionAndSaveImageToSd();
 		} else {
@@ -293,8 +299,9 @@ public class CameraActivity extends FragmentActivity implements BitmapDecodingLi
 
 	protected void saveImageToSd() {
 		log("onCompositionSaved(): " + getCurrentComposition().getObjectId());
-		imageSaver.saveImageAsync(freshImage, "slices",
+		imageSaver.saveImageAsync(slicedBitmap, "slices",
 				Static.createSliceFilename(getCurrentComposition().getObjectId(), step), this);
+		
 	}
 
 	@Override
@@ -302,7 +309,8 @@ public class CameraActivity extends FragmentActivity implements BitmapDecodingLi
 		if (filepath.contains("slice_")) {
 			Log.v(TAG, "shotNumber: " + step);
 			uploadSliceObject(step, filepath);
-
+			slicedBitmap.recycle();
+			slicedBitmap = null;
 		}
 	}
 

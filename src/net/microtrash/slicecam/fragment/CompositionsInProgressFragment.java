@@ -1,8 +1,6 @@
 package net.microtrash.slicecam.fragment;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -11,30 +9,25 @@ import net.microtrash.slicecam.R;
 import net.microtrash.slicecam.Static;
 import net.microtrash.slicecam.activity.CameraActivity;
 import net.microtrash.slicecam.dialog.ProgressbarPopup;
-import net.microtrash.slicecam.view.TextButton;
-
-import com.parse.FindCallback;
-import com.parse.GetDataCallback;
-import com.parse.ParseException;
-import com.parse.ParseFile;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
-import com.parse.ParseUser;
-
-import android.app.Activity;
+import net.microtrash.slicecam.view.SliceView;
+import net.microtrash.slicecam.view.SliceView.SliceViewListener;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
+import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
+
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 public class CompositionsInProgressFragment extends Fragment {
 	private ListView listView;
@@ -96,7 +89,10 @@ public class CompositionsInProgressFragment extends Fragment {
 		HashMap<String, ParseObject> sliceMap = new HashMap<String, ParseObject>();
 		for (ParseObject slice : slices) {
 			ParseObject composition = (ParseObject) slice.getParseObject(Static.FIELD_COMPOSITION);
-			sliceMap.put(composition.getObjectId(), slice);
+			// only show if this is the "cover slice" of this composition
+			if(composition.getInt(Static.FIELD_LAST_STEP) == slice.getInt(Static.FIELD_STEP)){
+				sliceMap.put(composition.getObjectId(), slice);
+			}
 		}
 
 		ArrayList<ParseObject> sliceList = new ArrayList<ParseObject>();
@@ -110,7 +106,7 @@ public class CompositionsInProgressFragment extends Fragment {
 		CameraActivity.start(composition.getObjectId(), getActivity());
 	}
 
-	public class CompositionAdapter extends BaseAdapter {
+	public class CompositionAdapter extends BaseAdapter implements SliceViewListener{
 
 	
 		private List<ParseObject> list;
@@ -160,54 +156,22 @@ public class CompositionsInProgressFragment extends Fragment {
 				itemView = convertView;
 			}
 
-			TextView tvUsername = (TextView) itemView.findViewById(R.id.item_composition_username);
-			TextView tvSlice = (TextView) itemView.findViewById(R.id.item_composition_slice);
-			final ImageView ivImage = (ImageView) itemView.findViewById(R.id.item_composition_iv_slice);
-			TextButton btContinue = (TextButton) itemView.findViewById(R.id.item_composition_bt_continue);
 			ParseObject slice = list.get(position);
+			
+			SliceView sliceView = (SliceView)itemView.findViewById(R.id.view_slice);
+			sliceView.setSlice(slice);
+			sliceView.setListener(this);
+			
+			Button btContinue = (Button) itemView.findViewById(R.id.view_slice_bt_continue);
 			btContinue.setTag(R.id.tag_slice, slice);
 			btContinue.setOnClickListener(onClickListener);
-
-			final String compositionId = slice.getParseObject(Static.FIELD_COMPOSITION).getObjectId();
-			final String filename = Static.createSliceFilename(compositionId, slice.getInt(Static.FIELD_STEP));
-			final String filepath = Static.getFullSliceFilepath(slice);
 			
-			File f = new File(filepath);
-			if(f.exists()){
-				Log.v(TAG, "loading from disk: "+filepath);
-				Bitmap bmp = BitmapFactory.decodeFile(filepath);
-				ivImage.setImageBitmap(bmp);
-			}else{
-				Log.v(TAG, "loading from backend: "+filepath);
-				ParseFile sliceFile = (ParseFile) slice.get(Static.FIELD_FILE);
-				sliceFile.getDataInBackground(new GetDataCallback() {
-					public void done(byte[] data, ParseException e) {
-						if (e == null) {
-							Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
-							
-							/*
-							 * Bitmap blurredSlice = ImageEffects.fastblur(bmp, 100,
-							 * bmp.getWidth(), (int) (bmp.getHeight() * (1d -
-							 * 0.2)));
-							 */
-							ivImage.setImageBitmap(bmp);
-							imageSaver.saveImageAsync(bmp, Static.SLICE_DIRECTORY_NAME, filename);
-						} else {
-							e.printStackTrace();
-						}
-					}
-
-				});
-			}
-	
-
-			tvUsername.setText(slice.getParseObject(Static.FIELD_CREATED_BY).getString(Static.FIELD_USERNAME));
-			Date date = slice.getDate("createdAt");
-			if (date != null) {
-				tvSlice.setText(date.toString());
-			}
-			tvSlice.setText("step: " + (slice.getInt(Static.FIELD_STEP) + 1) + "/4 \t ID: " + slice.getObjectId());
 			return itemView;
+		}
+
+		@Override
+		public void onImageDownloaded(Bitmap bitmap, String filename) {
+			imageSaver.saveImageAsync(bitmap, Static.SLICE_DIRECTORY_NAME, filename);
 		}
 
 	}

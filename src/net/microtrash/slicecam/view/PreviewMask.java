@@ -1,5 +1,7 @@
 package net.microtrash.slicecam.view;
 
+import com.parse.ParseObject;
+
 import net.microtrash.slicecam.R;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -10,7 +12,7 @@ import android.widget.RelativeLayout;
 
 public class PreviewMask extends RelativeLayout {
 	private RelativeLayout bottomView;
-	private RelativeLayout topView;
+	private SliceView topView;
 	private double ratio = 16d / 9d;
 	private ImageView outline;
 	// goes from 0 to 3
@@ -33,7 +35,7 @@ public class PreviewMask extends RelativeLayout {
 
 	private void init(Context context) {
 
-		topView = (RelativeLayout) findViewById(R.id.mask_top);
+		
 		bottomView = (RelativeLayout) findViewById(R.id.mask_bottom);
 		
 	}
@@ -44,7 +46,7 @@ public class PreviewMask extends RelativeLayout {
 		int width = MeasureSpec.getSize(widthMeasureSpec);
 		int height = MeasureSpec.getSize(heightMeasureSpec);
 
-		topView = (RelativeLayout) findViewById(R.id.mask_top);
+		topView = (SliceView) findViewById(R.id.view_slice);
 		bottomView = (RelativeLayout) findViewById(R.id.mask_bottom);
 
 		double maskHeight = (double) width / getRatio();
@@ -79,12 +81,9 @@ public class PreviewMask extends RelativeLayout {
 		this.ratio = ratio;
 	}
 
-	public void addPreImage(Bitmap bitmap) {
-		ProportionalBitmapView image = new ProportionalBitmapView(getContext());
-		image.setImageBitmap(bitmap);
-
-		topView = (RelativeLayout) findViewById(R.id.mask_top);
-		topView.addView(image);
+	public void setSlice(ParseObject slice) {
+		topView = (SliceView) findViewById(R.id.view_slice);
+		topView.setSlice(slice);
 
 	}
 

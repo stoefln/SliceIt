@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<net.microtrash.slicecam.view.SliceView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/view_slice"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="#FF00FF" >
+
+    <net.microtrash.slicecam.view.ProportionalBitmapView
+        android:id="@+id/view_slice_iv_slice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/placeholder_16_9" />
+
+    <RelativeLayout
+        android:id="@+id/view_slice_rl_info"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FE000000"
+        android:padding="20dp" >
+
+        <TextView
+            android:id="@+id/view_slice_label"
+            style="@style/Text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="sent to you by:" />
+
+        <TextView
+            android:id="@+id/view_slice_tv_username"
+            style="@style/Text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/view_slice_label"
+            android:text="username"
+            android:textSize="23sp" />
+
+        <TextView
+            android:id="@+id/view_slice_tv_id"
+            style="@style/Text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/view_slice_tv_username"
+            android:text="slice" />
+    </RelativeLayout>
+
+    <net.microtrash.slicecam.view.ArrowView
+        android:id="@+id/view_slice_av_arrow"
+        android:layout_width="30dp"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="50dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/view_slice_rl_info"
+         />
+
+</net.microtrash.slicecam.view.SliceView>
