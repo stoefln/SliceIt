@@ -68,24 +68,6 @@ public class SendToUserPopup extends PopupWindow {
 
 	}
 
-	private void updateComposition(ParseObject slice, final ParseUser user) {
-		/*
-		 * ParseQuery<ParseObject> query = ParseQuery.getQuery("Slice");
-		 * 
-		 * // Retrieve the object by id
-		 * query.getInBackground(slice.getObjectId(), new
-		 * GetCallback<ParseObject>() { public void done(ParseObject slice,
-		 * ParseException e) { if (e == null) { ParseObject composition =
-		 * (ParseObject) slice.get(Static.FIELD_COMPOSITION);
-		 * composition.put(Static.FIELD_SEND_TO_USER, user);
-		 * composition.saveInBackground(new SaveCallback() {
-		 * 
-		 * @Override public void done(ParseException arg0) {
-		 * compositionUpdated(user); } }); } } });
-		 */
-
-	}
-
 	private void show() {
 		parentView.post(new Runnable() {
 			@Override
@@ -107,14 +89,14 @@ public class SendToUserPopup extends PopupWindow {
 	public void sendToUser(final ParseUser user) {
 		show();
 		String myUsername = ParseUser.getCurrentUser().getUsername();
-		progressDialog.showAndDismiss("sending your photo slice\nto " + user.getUsername(), 3000, null);
+
 		updateSlice(slice, user);
 
 		PushService.sendPushMessage(user.getUsername(), myUsername + " sent you a photo slice!", new SendCallback() {
 
 			@Override
 			public void done(ParseException arg0) {
-				//progressDialog.dismiss();
+				// progressDialog.dismiss();
 				try {
 					dismiss();
 				} catch (Exception e) {
@@ -127,6 +109,12 @@ public class SendToUserPopup extends PopupWindow {
 
 	private void updateSlice(final ParseObject slice, final ParseUser user) {
 		slice.put(Static.FIELD_SEND_TO_USER, user);
+		ParseObject composition = slice.getParseObject(Static.FIELD_COMPOSITION);
+		if (composition.getParseUser(Static.FIELD_PLAYER2) == null
+				&& composition.getParseUser(Static.FIELD_PLAYER1) != user) {
+			composition.put(Static.FIELD_PLAYER2, user);
+			composition.saveInBackground();
+		}
 		slice.saveInBackground(new SaveCallback() {
 
 			@Override

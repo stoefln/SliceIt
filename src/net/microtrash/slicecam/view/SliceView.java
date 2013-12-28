@@ -3,29 +3,25 @@ package net.microtrash.slicecam.view;
 import java.io.File;
 import java.util.Date;
 
-import com.parse.GetDataCallback;
-import com.parse.ParseException;
-import com.parse.ParseFile;
-import com.parse.ParseObject;
-
 import net.microtrash.slicecam.R;
 import net.microtrash.slicecam.Static;
 import net.microtrash.slicecam.lib.Tools;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.Point;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
+
+import com.parse.GetDataCallback;
+import com.parse.ParseException;
+import com.parse.ParseFile;
+import com.parse.ParseObject;
 
 public class SliceView extends RelativeLayout {
 	private static final String TAG = "SliceView";
@@ -35,8 +31,8 @@ public class SliceView extends RelativeLayout {
 	private TextView tvUsername;
 	private TextView tvId;
 	private SliceViewListener listener;
-	private Path arrowPath;
 	private Paint arrowPaint;
+	private View contentView;
 
 	public interface SliceViewListener {
 		void onImageDownloaded(Bitmap bitmap, String filename);
@@ -58,11 +54,17 @@ public class SliceView extends RelativeLayout {
 	}
 
 	private void init(Context context) {
-		setWillNotDraw(false);
+		LayoutInflater inflater = LayoutInflater.from(context);
+		contentView = inflater.inflate(R.layout.view_slice, this, true);
+		//addView(contentView, new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+		//setWillNotDraw(false);
 		arrowPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		arrowPaint.setColor(Color.BLACK);
 		arrowPaint.setStyle(Paint.Style.FILL);
+		
+		contentView.findViewById(R.id.view_slice_label).setVisibility(View.GONE);
 		// arrowPaint.setStrokeWidth(10);
+		
 	}
 
 	@Override
@@ -94,11 +96,11 @@ public class SliceView extends RelativeLayout {
 
 	public void setSlice(ParseObject slice) {
 		this.slice = slice;
-
 		infoView = (RelativeLayout) findViewById(R.id.view_slice_rl_info);
 		imageView = (ProportionalBitmapView) findViewById(R.id.view_slice_iv_slice);
 		tvUsername = (TextView) findViewById(R.id.view_slice_tv_username);
 		tvId = (TextView) findViewById(R.id.view_slice_tv_id);
+		contentView.findViewById(R.id.view_slice_label).setVisibility(View.VISIBLE);
 		final String compositionId = slice.getParseObject(Static.FIELD_COMPOSITION).getObjectId();
 		final String filename = Static.createSliceFilename(compositionId, slice.getInt(Static.FIELD_STEP));
 		final String filepath = Static.getFullSliceFilepath(slice);

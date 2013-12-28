@@ -14,6 +14,8 @@ public class Static {
 	// how much of one slice should be hidden in the first place
 	public static final float HIDE_RATIO = 4f / 5f;
 	public static final float SLICE_ASPECT_RATIO = 16f / 9f;
+	public static final String FIELD_PLAYER1 = "player1";
+	public static final String FIELD_PLAYER2 = "player2";
 	public static String PUSH_DEFAULT_CHANNEL_KEY = "push_default_channel";
 	public static String FIELD_SEND_TO_USER = "send_to_user";
 	public static String FIELD_COMPOSITION = "composition";

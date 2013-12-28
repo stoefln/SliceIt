@@ -1,6 +1,5 @@
 package net.microtrash.slicecam.activity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import net.microtrash.slicecam.BitmapDecodingTask;
@@ -10,11 +9,14 @@ import net.microtrash.slicecam.ImageSaver;
 import net.microtrash.slicecam.ImageSaver.OnImageSavedListener;
 import net.microtrash.slicecam.R;
 import net.microtrash.slicecam.Static;
+import net.microtrash.slicecam.data.Composition;
 import net.microtrash.slicecam.dialog.ProgressbarPopup;
 import net.microtrash.slicecam.dialog.SendToUserPopup;
 import net.microtrash.slicecam.dialog.SendToUserPopup.SendToUserPopupListener;
-import net.microtrash.slicecam.lib.ImageEffects;
+import net.microtrash.slicecam.lib.DataAccess;
+import net.microtrash.slicecam.lib.DataAccess.OnCompositionLoadedListener;
 import net.microtrash.slicecam.lib.Tools;
+import net.microtrash.slicecam.view.FigureView;
 import net.microtrash.slicecam.view.IconButton;
 import net.microtrash.slicecam.view.PreviewMask;
 import android.content.Context;
@@ -40,8 +42,6 @@ import android.view.Window;
 import android.widget.Toast;
 
 import com.parse.FindCallback;
-import com.parse.GetCallback;
-import com.parse.GetDataCallback;
 import com.parse.ParseACL;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -71,9 +71,8 @@ public class CameraActivity extends FragmentActivity implements BitmapDecodingLi
 	private PreviewMask mask;
 	private double ratio = 16d / 9d;
 
-	private List<ParseObject> allSlices = null;
-	private ParseObject currentComposition = null;
-	private ParseObject lastSlice = null;
+	private Composition currentComposition;
+
 
 	private ProgressbarPopup progressDialog;
 
@@ -82,6 +81,8 @@ public class CameraActivity extends FragmentActivity implements BitmapDecodingLi
 	private ParseObject freshSliceObject;
 
 	private Bitmap slicedBitmap;
+
+	private FigureView figureView;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -122,6 +123,7 @@ public class CameraActivity extends FragmentActivity implements BitmapDecodingLi
 		mask = (PreviewMask) findViewById(R.id.mask);
 		mask.setRatio(ratio);
 
+		figureView = (FigureView) findViewById(R.id.activity_camera_fv_figure);
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 		sessionNumber = preferences.getInt("session_num", 0);
 		sessionNumber++;
@@ -159,51 +161,36 @@ public class CameraActivity extends FragmentActivity implements BitmapDecodingLi
 
 		} else {
 
-			loadCurrentComposition(getIntent().getExtras().getString(Static.EXTRA_COMPOSITION_ID));
+			DataAccess.loadCurrentComposition(getIntent().getExtras().getString(Static.EXTRA_COMPOSITION_ID), new OnCompositionLoadedListener() {
+				
+
+				@Override
+				public void onCompositionLoaded(Composition composition) {
+					currentComposition = composition;
+					String filepath = Static.getFullSliceFilepath(currentComposition.getLastSlice());
+					Bitmap bmp = BitmapFactory.decodeFile(filepath);
+					/*Bitmap blurredSlice = ImageEffects.fastblur(bmp, 100, bmp.getWidth(),
+							(int) (bmp.getHeight() * (1d - 0.2)));*/
+					mask.setSlice(currentComposition.getLastSlice());
+					step = currentComposition.getLastSlice().getInt("step") + 1;
+					progressDialog.dismiss();
+					mask.setStep(step);
+					figureView.setStep(step);
+					/*imageSaver.saveImageAsync(bmp, Static.SLICE_DIRECTORY_NAME,
+							Static.createSliceFilename(composition.getParseObjectId(), step));*/
+					
+				}
+			});
 			progressDialog.show("loading last photo slice...");
 		}
 	}
 
-	private void loadCurrentComposition(final String compositionId) {
-		ParseQuery<ParseObject> compositionQuery = ParseQuery.getQuery("Composition");
-		compositionQuery.whereEqualTo("objectId", compositionId);
-
-		ParseQuery<ParseObject> query2 = ParseQuery.getQuery("Slice");
-		query2.whereMatchesQuery(Static.FIELD_COMPOSITION, compositionQuery);
-		query2.include(Static.FIELD_COMPOSITION);
-		query2.include(Static.FIELD_CREATED_BY);
-		query2.findInBackground(new FindCallback<ParseObject>() {
-
-			public void done(List<ParseObject> slices, ParseException e) {
-				if (e == null) {
-					if (slices.size() > 0) {
-						allSlices = slices;
-						log("Loaded " + slices.size() + " slices");
-						lastSlice = slices.get(slices.size() - 1);
-
-						String filepath = Static.getFullSliceFilepath(lastSlice);
-						Bitmap bmp = BitmapFactory.decodeFile(filepath);
-						/*Bitmap blurredSlice = ImageEffects.fastblur(bmp, 100, bmp.getWidth(),
-								(int) (bmp.getHeight() * (1d - 0.2)));*/
-						mask.setSlice(lastSlice);
-						step = lastSlice.getInt("step") + 1;
-						progressDialog.dismiss();
-						mask.setStep(step);
-						imageSaver.saveImageAsync(bmp, Static.SLICE_DIRECTORY_NAME,
-								Static.createSliceFilename(compositionId, step));
-						currentComposition = lastSlice.getParseObject("composition");
-				
-					} else {
-						log("No slices for composition " + compositionId + " found!");
-					}
-
-				} else {
-					log("Error: " + e.getMessage());
-				}
-
-			}
-
-		});
+	@Override
+	protected void onDestroy() {
+		if(imageSaver != null){
+			
+		}
+		super.onDestroy();
 	}
 
 	private void log(String string) {
@@ -286,21 +273,25 @@ public class CameraActivity extends FragmentActivity implements BitmapDecodingLi
 
 	private void createNewCompositionAndSaveImageToSd() {
 		Log.v(TAG, "creating new composition");
-		currentComposition = new ParseObject("Composition");
-		currentComposition.put("createdBy", ParseUser.getCurrentUser().getUsername());
-		currentComposition.saveInBackground(new SaveCallback() {
+		final ParseObject parseObject = new ParseObject("Composition");
+		parseObject.put(Static.FIELD_CREATED_BY, ParseUser.getCurrentUser());
+		parseObject.put(Static.FIELD_PLAYER1, ParseUser.getCurrentUser());
+		//parseObject.put(Static.FIELD_PLAYER2, ParseUser.getCurrentUser());
+		parseObject.saveInBackground(new SaveCallback() {
 
 			@Override
 			public void done(ParseException arg0) {
+				currentComposition = new Composition();
+				currentComposition.setParseObject(parseObject);
 				saveImageToSd();
 			}
 		});
 	}
 
 	protected void saveImageToSd() {
-		log("onCompositionSaved(): " + getCurrentComposition().getObjectId());
+		log("onCompositionSaved(): " + currentComposition.getParseObjectId());
 		imageSaver.saveImageAsync(slicedBitmap, "slices",
-				Static.createSliceFilename(getCurrentComposition().getObjectId(), step), this);
+				Static.createSliceFilename(currentComposition.getParseObjectId(), step), this);
 		
 	}
 
@@ -327,9 +318,12 @@ public class CameraActivity extends FragmentActivity implements BitmapDecodingLi
 			@Override
 			public void done(ParseException ex) {
 				if (ex == null) {
-					ParseObject composition = getCurrentComposition();
+					ParseObject composition = currentComposition.getParseObject();
 
 					composition.put(Static.FIELD_LAST_STEP, step);
+					if(composition.getParseUser(Static.FIELD_PLAYER1) != ParseUser.getCurrentUser()){
+						composition.put(Static.FIELD_PLAYER2, ParseUser.getCurrentUser());
+					}
 
 					freshSliceObject.put(Static.FIELD_FILE, upload);
 					freshSliceObject.put(Static.FIELD_CREATED_BY, ParseUser.getCurrentUser());
@@ -352,6 +346,14 @@ public class CameraActivity extends FragmentActivity implements BitmapDecodingLi
 		};
 
 		upload.saveInBackground(onImageUploaded);
+		if(currentComposition != null && currentComposition.getLastUser() != null){
+			String username = currentComposition.getLastUser().getUsername();
+			if (step < Static.MAX_STEP) {
+				progressDialog.show("sending your photo slice\nto " + username);
+			}else{
+				progressDialog.show("generating photostrip");
+			}
+		}
 	}
 
 	final SaveCallback onSliceObjectUploaded = new SaveCallback() {
@@ -363,7 +365,7 @@ public class CameraActivity extends FragmentActivity implements BitmapDecodingLi
 
 				final SendToUserPopup sendToUserPopup = new SendToUserPopup(CameraActivity.this,
 						findViewById(R.id.activity_camera), freshSliceObject, CameraActivity.this);
-				if (lastSlice == null) {
+				if(currentComposition.getLastUser() == null){
 					ParseQuery<ParseUser> query = ParseUser.getQuery();
 					query.findInBackground(new FindCallback<ParseUser>() {
 						public void done(List<ParseUser> users, ParseException e) {
@@ -379,15 +381,12 @@ public class CameraActivity extends FragmentActivity implements BitmapDecodingLi
 						}
 					});
 				} else {
-					allSlices.add(freshSliceObject);
-					ParseUser collaborator = lastSlice.getParseUser(Static.FIELD_CREATED_BY);
+					
 					if (step >= Static.MAX_STEP) {
-						PhotoStripActivity.start(CameraActivity.this, currentComposition.getObjectId(),
-								getSliceFilenames(allSlices), collaborator
-										.getUsername());
+						PhotoStripActivity.start(CameraActivity.this, currentComposition.getParseObjectId());
 						finish();
 					} else {
-						sendToUserPopup.sendToUser(collaborator);
+						sendToUserPopup.sendToUser(currentComposition.getLastUser());
 					}
 
 				}
@@ -399,26 +398,11 @@ public class CameraActivity extends FragmentActivity implements BitmapDecodingLi
 
 	};
 
-	private ArrayList<String> getSliceFilenames(List<ParseObject> allSlices) {
-		ArrayList<String> filenames = new ArrayList<String>();
-		for (ParseObject slice : allSlices) {
-			String sliceFilename = Static.createSliceFilename(currentComposition.getObjectId(),
-					slice.getInt(Static.FIELD_STEP));
-			filenames.add(sliceFilename + "." + Static.IMAGE_FILE_EXTENSION);
-			// TODO: check whether file is really on the disc, load from parse
-			// otherwise...
-		}
-		return filenames;
-	}
-
-	private ParseObject getCurrentComposition() {
-		return currentComposition;
-	}
 
 	@Override
 	public void onNotificationSent(ParseUser user) {
-		Toast.makeText(this, "Your photo was sent!", Toast.LENGTH_SHORT).show();
-		log("Everything was saved. Compositionid: " + currentComposition.getObjectId());
+		Toast.makeText(this, "Your photo was sent to "+user.getString(Static.FIELD_USERNAME)+"!", Toast.LENGTH_LONG).show();
+		log("Everything was saved. Compositionid: " + currentComposition.getParseObjectId());
 		// TODO: update filename of first slice which was shot -> we need the
 		// compositionId there
 		finish();

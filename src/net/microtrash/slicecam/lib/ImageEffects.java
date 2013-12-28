@@ -251,23 +251,31 @@ public class ImageEffects {
 		return (bitmap);
 	}
 
-	public static Bitmap createComposition(Context c, ArrayList<String> imageFilenpaths) {
+	public static Bitmap createComposition(Context c, ArrayList<String> imageFilenpaths, int downsample) {
 
-		int i = 0;
 		Bitmap mainImage = null;
 		Canvas canvas = null;
 		Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		Matrix matrix = new Matrix();
+		System.gc();
 		for (String filepath : imageFilenpaths) {
 			BitmapFactory.Options options = new BitmapFactory.Options();
+			options.inSampleSize = downsample;
 			// options.inJustDecodeBounds = true;
 			Bitmap bitmap = BitmapFactory.decodeFile(filepath, options);
 			if (mainImage == null) {
-				mainImage = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight() * imageFilenpaths.size(),
-						Bitmap.Config.ARGB_8888);
-				canvas = new Canvas(mainImage);
+				try {
+					mainImage = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight() * imageFilenpaths.size(),
+							Bitmap.Config.ARGB_8888);
+					canvas = new Canvas(mainImage);
+				} catch (OutOfMemoryError e) {
+					if(downsample < 4){
+						Log.v(TAG, "compatibility mode: downsample by " + downsample * 2);
+						return createComposition(c, imageFilenpaths, downsample * 2);
+					}
+				}
 			}
-			Log.v(TAG, "imagepath: "+filepath);
+			Log.v(TAG, "imagepath: " + filepath);
 			canvas.drawBitmap(bitmap, matrix, paint);
 			matrix.postTranslate(0, bitmap.getHeight());
 			bitmap = null;

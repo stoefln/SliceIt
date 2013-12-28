@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<net.microtrash.slicecam.view.SliceView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/view_slice"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="#FF00FF" >
@@ -31,7 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/view_slice_label"
-            android:text="username"
+            android:text=""
             android:textSize="23sp" />
 
         <TextView
@@ -40,7 +39,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/view_slice_tv_username"
-            android:text="slice" />
+            android:text="" />
     </RelativeLayout>
 
     <net.microtrash.slicecam.view.ArrowView
@@ -52,4 +51,4 @@
         android:layout_below="@+id/view_slice_rl_info"
          />
 
-</net.microtrash.slicecam.view.SliceView>
+</merge>

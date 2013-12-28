@@ -35,9 +35,8 @@ public class PreviewMask extends RelativeLayout {
 
 	private void init(Context context) {
 
-		
 		bottomView = (RelativeLayout) findViewById(R.id.mask_bottom);
-		
+
 	}
 
 	@Override
@@ -46,7 +45,7 @@ public class PreviewMask extends RelativeLayout {
 		int width = MeasureSpec.getSize(widthMeasureSpec);
 		int height = MeasureSpec.getSize(heightMeasureSpec);
 
-		topView = (SliceView) findViewById(R.id.view_slice);
+		topView = (SliceView) findViewById(R.id.activity_camera_sv);
 		bottomView = (RelativeLayout) findViewById(R.id.mask_bottom);
 
 		double maskHeight = (double) width / getRatio();
@@ -63,7 +62,7 @@ public class PreviewMask extends RelativeLayout {
 		outline = (ImageView) findViewById(R.id.outline);
 		outline.setVisibility(View.VISIBLE);
 		double maskHeight = (double) width / getRatio();
-		
+
 		RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) outline.getLayoutParams();
 
 		int offset = (int) ((1 - getStep()) * maskHeight);
@@ -82,9 +81,8 @@ public class PreviewMask extends RelativeLayout {
 	}
 
 	public void setSlice(ParseObject slice) {
-		topView = (SliceView) findViewById(R.id.view_slice);
+		topView = (SliceView) findViewById(R.id.activity_camera_sv);
 		topView.setSlice(slice);
-
 	}
 
 	public int getStep() {
@@ -95,7 +93,5 @@ public class PreviewMask extends RelativeLayout {
 		this.step = step;
 		positionOutline(getHeight(), getWidth());
 	}
-
-
 
 }

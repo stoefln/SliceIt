@@ -4,10 +4,10 @@
     android:layout_height="wrap_content"
     android:orientation="vertical" >
 
-    <include
+    <net.microtrash.slicecam.view.SliceView
+        android:id="@+id/item_slice_sv"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        layout="@layout/view_slice" />
+        android:layout_height="match_parent" />
 
     <Button
         android:id="@+id/view_slice_bt_continue"

@@ -98,57 +98,34 @@ public class CompositionsFinishedFragment extends Fragment {
 		});
 	}
 
-	private List<ParseObject> getCompositionListFromSliceList(List<ParseObject> slices) {
-		HashMap<String, ParseObject> compositions = new HashMap<String, ParseObject>();
+	private List<Composition> getCompositionListFromSliceList(List<ParseObject> slices) {
+		HashMap<String, Composition> compositions = new HashMap<String, Composition>();
 		for (ParseObject slice : slices) {
-			ParseObject composition = (ParseObject) slice.getParseObject(Static.FIELD_COMPOSITION);
-			compositions.put(composition.getObjectId(), composition);
+			ParseObject parseComp = (ParseObject) slice.getParseObject(Static.FIELD_COMPOSITION);
+			Composition composition = compositions.get(parseComp.getObjectId());
+			if(composition == null){
+				composition = new Composition();
+				composition.setParseObject(parseComp);
+			}
+			composition.getSlices().add(slice);
+			compositions.put(parseComp.getObjectId(), composition);
 		}
 
-		ArrayList<ParseObject> compositionList = new ArrayList<ParseObject>();
+		ArrayList<Composition> compositionList = new ArrayList<Composition>();
 		for (String key : compositions.keySet()) {
 			compositionList.add(compositions.get(key));
 		}
 		return compositionList;
 	}
 
-	private void onCompositionsLoaded(List<ParseObject> compositions) {
+	private void onCompositionsLoaded(List<Composition> list) {
 
-		CompositionAdapter adapter = new CompositionAdapter(compositions);
+		
+		CompositionAdapter adapter = new CompositionAdapter(list);
 		listView.setAdapter(adapter);
 	}
 
-	private void loadComposition(final String compositionId) {
-
-		ParseQuery<ParseObject> compositionQuery = ParseQuery.getQuery("Composition");
-		compositionQuery.whereEqualTo("objectId", compositionId);
-
-		ParseQuery<ParseObject> query2 = ParseQuery.getQuery("Slice");
-		query2.whereMatchesQuery(Static.FIELD_COMPOSITION, compositionQuery);
-		query2.include(Static.FIELD_COMPOSITION);
-		query2.findInBackground(new FindCallback<ParseObject>() {
-
-			public void done(List<ParseObject> slices, ParseException e) {
-				if (e == null) {
-					if (slices.size() > 0) {
-
-						ParseObject composition = slices.get(slices.size() - 1)
-								.getParseObject(Static.FIELD_COMPOSITION);
-
-						onCompositionLoaded(composition, slices);
-					} else {
-						log("No slices for composition " + compositionId + " found!");
-					}
-
-				} else {
-					log("Error: " + e.getMessage());
-				}
-
-			}
-
-		});
-	}
-
+	
 	protected void onCompositionLoaded(ParseObject composition, List<ParseObject> slices) {
 		ArrayList<String> filenames = new ArrayList<String>();
 		for (ParseObject slice : slices) {
@@ -166,10 +143,10 @@ public class CompositionsFinishedFragment extends Fragment {
 
 	public class CompositionAdapter extends BaseAdapter implements OnClickListener {
 
-		private List<ParseObject> list;
+		private List<Composition> list;
 
-		public CompositionAdapter(List<ParseObject> objects) {
-			list = objects;
+		public CompositionAdapter(List<Composition> list2) {
+			list = list2;
 
 		}
 
@@ -204,8 +181,9 @@ public class CompositionsFinishedFragment extends Fragment {
 			}
 			ImageView iv = (ImageView) itemView.findViewById(R.id.item_composition_iv);
 
-			ParseObject composition = list.get(position);
-			String filepath = Static.getCompositionFilpath(Static.createCompositionFilename(composition.getObjectId()
+			Composition composition = list.get(position);
+			
+			String filepath = Static.getCompositionFilpath(Static.createCompositionFilename(composition.getParseObjectId()
 					+ ".jpg"));
 			File file = new File(filepath);
 			log("filepath: " + filepath + " exists: " + file.exists());
@@ -213,7 +191,7 @@ public class CompositionsFinishedFragment extends Fragment {
 				BitmapFactory.Options options = new BitmapFactory.Options();
 				Bitmap bmpComposition = BitmapFactory.decodeFile(filepath, options);
 				iv.setImageBitmap(bmpComposition);
-				iv.setTag(filepath);
+				iv.setTag(composition);
 				iv.setOnClickListener(this);
 			}
 
@@ -222,11 +200,13 @@ public class CompositionsFinishedFragment extends Fragment {
 
 		@Override
 		public void onClick(View v) {
-			String filepath = (String) v.getTag();
+			/*String filepath = (String) v.getTag();
 			Intent intent = new Intent();
 			intent.setAction(Intent.ACTION_VIEW);
 			intent.setDataAndType(Uri.parse("file://" +filepath), "image/*");
-			startActivity(intent);
+			startActivity(intent);*/
+			ParseObject composition = (ParseObject) v.getTag();
+			PhotoStripActivity.start(getActivity(), composition.getObjectId());
 		}
 
 	}

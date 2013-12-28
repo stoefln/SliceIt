@@ -27,7 +27,7 @@ public class ImageSaver {
 	}
 
 	private Activity context;
-	private int imageQuality = 90;
+	private int imageQuality = 45;
 	private String defaultImageFormat = "JPEG";
 
 	

@@ -9,6 +9,7 @@ import net.microtrash.slicecam.R;
 import net.microtrash.slicecam.Static;
 import net.microtrash.slicecam.activity.CameraActivity;
 import net.microtrash.slicecam.dialog.ProgressbarPopup;
+import net.microtrash.slicecam.dialog.ProgressbarPopup.OnDialogClosedListener;
 import net.microtrash.slicecam.view.SliceView;
 import net.microtrash.slicecam.view.SliceView.SliceViewListener;
 import android.graphics.Bitmap;
@@ -58,12 +59,21 @@ public class CompositionsInProgressFragment extends Fragment {
 	public void onResume() {
 		super.onResume();
 		progressDialog.show("Loading photo strips...");
-		ParseQuery<ParseObject> compositionQuery = ParseQuery.getQuery("Composition");
+		//ParseQuery<ParseObject> compositionQuery1 = ParseQuery.getQuery("Composition");
+		ParseQuery<ParseObject> compositionQuery1 = ParseQuery.getQuery("Composition");
+		compositionQuery1.whereEqualTo(Static.FIELD_PLAYER1, ParseUser.getCurrentUser());
+		ParseQuery<ParseObject> compositionQuery2 = ParseQuery.getQuery("Composition");
+		compositionQuery2.whereEqualTo(Static.FIELD_PLAYER2, ParseUser.getCurrentUser());
+		
+		ArrayList<ParseQuery<ParseObject>> queryList = new ArrayList<ParseQuery<ParseObject>>();
+		queryList.add(compositionQuery1);
+		queryList.add(compositionQuery2);
+		
+		ParseQuery<ParseObject> compositionQuery = ParseQuery.or(queryList);
 		compositionQuery.whereLessThan(Static.FIELD_LAST_STEP, Static.MAX_STEP);
-
+		
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("Slice");
 		query.whereMatchesQuery(Static.FIELD_COMPOSITION, compositionQuery);
-		query.whereEqualTo(Static.FIELD_SEND_TO_USER, ParseUser.getCurrentUser());
 		
 		query.include(Static.FIELD_COMPOSITION);
 		query.include(Static.FIELD_CREATED_BY);
@@ -115,8 +125,17 @@ public class CompositionsInProgressFragment extends Fragment {
 
 			@Override
 			public void onClick(View v) {
-				ParseObject slice = (ParseObject) v.getTag(R.id.tag_slice);
-				onCompositionSelected(slice.getParseObject(Static.FIELD_COMPOSITION));
+				final ParseObject slice = (ParseObject) v.getTag(R.id.tag_slice);
+				progressDialog.showAndDismiss("hang on", 1000, new OnDialogClosedListener() {
+					
+					@Override
+					public void onDialogClosed(boolean positive) {
+						onCompositionSelected(slice.getParseObject(Static.FIELD_COMPOSITION));
+					}
+				});
+				
+				v.setVisibility(View.GONE);
+				
 			}
 
 		};
@@ -158,14 +177,14 @@ public class CompositionsInProgressFragment extends Fragment {
 
 			ParseObject slice = list.get(position);
 			
-			SliceView sliceView = (SliceView)itemView.findViewById(R.id.view_slice);
+			SliceView sliceView = (SliceView)itemView.findViewById(R.id.item_slice_sv);
 			sliceView.setSlice(slice);
 			sliceView.setListener(this);
 			
 			Button btContinue = (Button) itemView.findViewById(R.id.view_slice_bt_continue);
 			btContinue.setTag(R.id.tag_slice, slice);
 			btContinue.setOnClickListener(onClickListener);
-			
+			//btContinue.setVisibility(View.GONE);
 			return itemView;
 		}
 
