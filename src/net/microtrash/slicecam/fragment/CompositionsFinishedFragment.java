@@ -2,19 +2,30 @@ package net.microtrash.slicecam.fragment;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import net.microtrash.slicecam.ImageSaver;
+import net.microtrash.slicecam.ImageSaver.OnImageSavedListener;
 import net.microtrash.slicecam.R;
 import net.microtrash.slicecam.Static;
-import net.microtrash.slicecam.activity.CameraActivity;
 import net.microtrash.slicecam.activity.PhotoStripActivity;
 import net.microtrash.slicecam.data.Composition;
 import net.microtrash.slicecam.dialog.ProgressbarPopup;
-import net.microtrash.slicecam.fragment.CompositionsInProgressFragment.CompositionAdapter;
 import net.microtrash.slicecam.lib.ImageEffects;
-import net.microtrash.slicecam.view.TextButton;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.AbsListView.LayoutParams;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
 
 import com.parse.FindCallback;
 import com.parse.GetDataCallback;
@@ -24,31 +35,16 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.View.OnClickListener;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.AbsListView.LayoutParams;
+public class CompositionsFinishedFragment extends Fragment implements OnImageSavedListener {
 
-public class CompositionsFinishedFragment extends Fragment {
-
+	private static final String TAG = "CompositionsFinishedFragment";
 	private LayoutInflater inflater;
-	private LinearLayout sliceContainer;
 	private ListView listView;
 	private ProgressbarPopup progressDialog;
+	private ImageSaver imageSaver;
+	private int downloads;
+	private List<Composition> loadedCompositions;
+	private net.microtrash.slicecam.fragment.CompositionsFinishedFragment.CompositionAdapter adapter;
 
 	public static Fragment create() {
 
@@ -72,13 +68,22 @@ public class CompositionsFinishedFragment extends Fragment {
 	@Override
 	public void onResume() {
 		super.onResume();
-
-		ParseQuery<ParseObject> compositionQuery = ParseQuery.getQuery("Composition");
+		imageSaver = new ImageSaver(getActivity());
+		ParseQuery<ParseObject> compositionQuery1 = ParseQuery.getQuery("Composition");
+		compositionQuery1.whereEqualTo(Static.FIELD_PLAYER1, ParseUser.getCurrentUser());
+		ParseQuery<ParseObject> compositionQuery2 = ParseQuery.getQuery("Composition");
+		compositionQuery2.whereEqualTo(Static.FIELD_PLAYER2, ParseUser.getCurrentUser());
+		
+		ArrayList<ParseQuery<ParseObject>> queryList = new ArrayList<ParseQuery<ParseObject>>();
+		queryList.add(compositionQuery1);
+		queryList.add(compositionQuery2);
+		
+		ParseQuery<ParseObject> compositionQuery = ParseQuery.or(queryList);
 		compositionQuery.whereGreaterThan(Static.FIELD_LAST_STEP, Static.MAX_STEP - 1);
 
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("Slice");
 		query.whereMatchesQuery(Static.FIELD_COMPOSITION, compositionQuery);
-		query.whereEqualTo(Static.FIELD_SEND_TO_USER, ParseUser.getCurrentUser());
+		//query.whereEqualTo(Static.FIELD_SEND_TO_USER, ParseUser.getCurrentUser());
 
 		query.include(Static.FIELD_COMPOSITION);
 		query.include(Static.FIELD_CREATED_BY);
@@ -86,7 +91,7 @@ public class CompositionsFinishedFragment extends Fragment {
 		query.findInBackground(new FindCallback<ParseObject>() {
 			public void done(List<ParseObject> slices, ParseException e) {
 				if (e == null) {
-					log("Retrieved " + slices.size() + " scores");
+					log("Retrieved " + slices.size() + " slices (finished composition)");
 
 					onCompositionsLoaded(getCompositionListFromSliceList(slices));
 
@@ -119,21 +124,72 @@ public class CompositionsFinishedFragment extends Fragment {
 	}
 
 	private void onCompositionsLoaded(List<Composition> list) {
+		loadedCompositions = list;
+		for(Composition composition : list){
+			downloads = 0;
+			for (ParseObject slice : composition.getSlices()) {
+				String filename = Static.createSliceFilename(composition.getParseObjectId(), slice.getInt(Static.FIELD_STEP));
+				File file = new File(Static.getFullSliceFilepath(slice));
+				if(!file.exists()){
+					downloads++;
+					Log.v(TAG, "downloading slice "+filename);
+					new SliceDownloader(imageSaver, slice, filename, this);
+				}
+				log(filename);
 
+			}
+		}
+		if(downloads == 0){
+			onAllImagesDownloaded();
+		}
 		
-		CompositionAdapter adapter = new CompositionAdapter(list);
+		adapter = new CompositionAdapter(list);
 		listView.setAdapter(adapter);
 	}
 
 	
-	protected void onCompositionLoaded(ParseObject composition, List<ParseObject> slices) {
-		ArrayList<String> filenames = new ArrayList<String>();
-		for (ParseObject slice : slices) {
-			String filename = Static.createSliceFilename(composition.getObjectId(), slice.getInt(Static.FIELD_STEP));
-			log(filename);
-			filenames.add(filename);
+	private class SliceDownloader{
+		
+		public SliceDownloader(final ImageSaver imageSaver, final ParseObject slice, final String filename, OnImageSavedListener listener) {
+
+			ParseFile sliceFile = (ParseFile) slice.get(Static.FIELD_FILE);
+			sliceFile.getDataInBackground(new GetDataCallback() {
+				public void done(byte[] data, ParseException e) {
+					if (e == null) {
+						Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+						imageSaver.saveImageAsync(bitmap, Static.SLICE_DIRECTORY_NAME, filename, CompositionsFinishedFragment.this);
+					} else {
+						e.printStackTrace();
+					}
+				}
+
+			});
+			
 		}
-		PhotoStripActivity.addImageViewsToContainer(sliceContainer, filenames);
+	}
+	
+
+	@Override
+	public void onImageSaved(String lastCompositionPath) {
+		downloads--;
+		if(downloads == 0){
+			onAllImagesDownloaded();
+		}
+		
+	}
+
+	private void onAllImagesDownloaded() {
+		for(Composition composition : loadedCompositions){
+			ImageEffects.createCompositionImage(getActivity(), composition, new OnImageSavedListener() {
+				
+				@Override
+				public void onImageSaved(String lastCompositionPath) {
+					adapter.notifyDataSetChanged();
+				}
+			});
+
+		}
+		
 	}
 
 	private void log(String string) {
@@ -191,10 +247,10 @@ public class CompositionsFinishedFragment extends Fragment {
 				BitmapFactory.Options options = new BitmapFactory.Options();
 				Bitmap bmpComposition = BitmapFactory.decodeFile(filepath, options);
 				iv.setImageBitmap(bmpComposition);
-				iv.setTag(composition);
-				iv.setOnClickListener(this);
+				
 			}
-
+			iv.setTag(composition);
+			iv.setOnClickListener(this);
 			return itemView;
 		}
 
@@ -205,10 +261,11 @@ public class CompositionsFinishedFragment extends Fragment {
 			intent.setAction(Intent.ACTION_VIEW);
 			intent.setDataAndType(Uri.parse("file://" +filepath), "image/*");
 			startActivity(intent);*/
-			ParseObject composition = (ParseObject) v.getTag();
-			PhotoStripActivity.start(getActivity(), composition.getObjectId());
+			Composition composition = (Composition) v.getTag();
+			PhotoStripActivity.start(getActivity(), composition.getParseObjectId());
 		}
 
 	}
+
 
 }

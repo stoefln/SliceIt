@@ -1,5 +1,6 @@
 package net.microtrash.slicecam.activity;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import net.microtrash.slicecam.ImageSaver;
@@ -67,14 +68,18 @@ public class PhotoStripActivity extends Activity implements OnImageSavedListener
 
 		progressDialog.dismiss();
 		
-		ArrayList<String> allFilepaths = addImageViewsToContainer(sliceContainer, composition.getSlicesFilenames());
+		final Button btnSend = (Button) findViewById(R.id.activity_photostrip_btn_send);
+		btnSend.setVisibility(View.GONE);
+		
+		ImageEffects.createCompositionImage(this, composition, new OnImageSavedListener() {
+			
+			@Override
+			public void onImageSaved(String lastCompositionPath) {
+				btnSend.setVisibility(View.VISIBLE);
+				
+			}
+		});
 
-		Bitmap bmpComposition = ImageEffects.createComposition(this, allFilepaths, 1);
-		imageSaver = new ImageSaver(this);
-		imageSaver
-				.saveImageAsync(bmpComposition, "compositions", Static.createCompositionFilename(compositionId), this);
-
-		Button btnSend = (Button) findViewById(R.id.activity_photostrip_btn_send);
 		final String collaborator = composition.getLastUser().getString(Static.FIELD_USERNAME);
 		btnSend.setText("Send this to " + collaborator);
 		btnSend.setOnClickListener(new OnClickListener() {
@@ -92,22 +97,22 @@ public class PhotoStripActivity extends Activity implements OnImageSavedListener
 				});
 			}
 		});
+		
+		for (String filename : composition.getSlicesFilenames()) {
+			String filepath = Static.getSliceFilpath(filename);
+			addSliceToContainer(sliceContainer, filepath);
+		}
 	}
 
-	public static ArrayList<String> addImageViewsToContainer(LinearLayout sliceContainer, ArrayList<String> allFilenames) {
-		ArrayList<String> allFilepaths = new ArrayList<String>();
-		for (String filename : allFilenames) {
-			String filepath = Static.getSliceFilpath(filename);
-			allFilepaths.add(filepath);
-			ProportionalBitmapView iv = new ProportionalBitmapView(sliceContainer.getContext());
-			Bitmap bmp = BitmapFactory.decodeFile(filepath);
-			iv.setImageBitmap(bmp);
-			android.widget.LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
-					0);
-			params.weight = 1;
-			sliceContainer.addView(iv, params);
-		}
-		return allFilepaths;
+
+
+	private static void addSliceToContainer(LinearLayout sliceContainer, String filepath) {
+		ProportionalBitmapView iv = new ProportionalBitmapView(sliceContainer.getContext());
+		Bitmap bmp = BitmapFactory.decodeFile(filepath);
+		iv.setImageBitmap(bmp);
+		android.widget.LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, 0);
+		params.weight = 1;
+		sliceContainer.addView(iv, params);
 	}
 
 	@Override

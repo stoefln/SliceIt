@@ -9,6 +9,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
@@ -26,7 +27,7 @@ public class ImageSaver {
 		void onImageSaved(String lastCompositionPath);
 	}
 
-	private Activity context;
+	private Context context;
 	private int imageQuality = 45;
 	private String defaultImageFormat = "JPEG";
 
@@ -50,7 +51,7 @@ public class ImageSaver {
 		this.imageQuality = imageQuality;
 	}
 
-	public ImageSaver(Activity context) {
+	public ImageSaver(Context context) {
 		this.context = context;
 	}
 
@@ -118,17 +119,17 @@ public class ImageSaver {
 			Log.v(TAG, "saving image without transparency");
 			processedImage = image; // sensorImageRotator.rotateBitmap(image);
 
-			if (context.getIntent().getAction() != null
-					&& context.getIntent().getAction().equals("android.media.action.IMAGE_CAPTURE")
-					&& context.getIntent().getExtras() != null) {
-				Uri saveUri = (Uri) context.getIntent().getExtras().getParcelable(MediaStore.EXTRA_OUTPUT);
+			if (context instanceof Activity && ((Activity) context).getIntent().getAction() != null
+					&& ((Activity) context).getIntent().getAction().equals("android.media.action.IMAGE_CAPTURE")
+					&& ((Activity) context).getIntent().getExtras() != null) {
+				Uri saveUri = (Uri) ((Activity) context).getIntent().getExtras().getParcelable(MediaStore.EXTRA_OUTPUT);
 				if (saveUri != null) {
 					// Save the bitmap to the specified URI (use a try/catch
 					// block)
 					stream = context.getContentResolver().openOutputStream(saveUri);
 					processedImage.compress(CompressFormat.JPEG, this.imageQuality, stream);
 					Log.v(TAG, "returning via reference");
-					context.setResult(Activity.RESULT_OK);
+					((Activity) context).setResult(Activity.RESULT_OK);
 					stream.flush();
 					stream.close();
 				} else {
@@ -137,9 +138,9 @@ public class ImageSaver {
 					// a Parcelable
 					// (it is a good idea to reduce its size to ~50k pixels
 					// before)
-					context.setResult(Activity.RESULT_OK, new Intent("inline-data").putExtra("data", processedImage));
+					((Activity) context).setResult(Activity.RESULT_OK, new Intent("inline-data").putExtra("data", processedImage));
 				}
-				context.finish();
+				((Activity) context).finish();
 				return saveUri.toString();
 			} else {
 

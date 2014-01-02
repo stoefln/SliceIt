@@ -1,6 +1,7 @@
 package net.microtrash.slicecam.data;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import net.microtrash.slicecam.Static;
@@ -68,6 +69,16 @@ public class Composition {
 					slice.getInt(Static.FIELD_STEP));
 			filenames.add(sliceFilename + "." + Static.IMAGE_FILE_EXTENSION);
 		}
+		Collections.sort(filenames);
 		return filenames;
+	}
+
+	public ArrayList<String> getSlicesFilenpaths() {
+		ArrayList<String> filepaths = new ArrayList<String>();
+		for (ParseObject slice : getSlices()) {
+			filepaths.add(Static.getFullSliceFilepath(slice));
+		}
+		Collections.sort(filepaths);
+		return filepaths;
 	}
 }

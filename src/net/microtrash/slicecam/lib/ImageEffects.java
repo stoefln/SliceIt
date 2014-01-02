@@ -1,6 +1,13 @@
 package net.microtrash.slicecam.lib;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+
+import net.microtrash.slicecam.ImageSaver;
+import net.microtrash.slicecam.Static;
+import net.microtrash.slicecam.ImageSaver.OnImageSavedListener;
+import net.microtrash.slicecam.data.Composition;
 
 import android.app.Activity;
 import android.content.Context;
@@ -262,6 +269,10 @@ public class ImageEffects {
 			BitmapFactory.Options options = new BitmapFactory.Options();
 			options.inSampleSize = downsample;
 			// options.inJustDecodeBounds = true;
+			File f = new File(filepath);
+			if (!f.exists()) {
+				Log.e(TAG, "createComposition: File " + filepath + " could not be found!");
+			}
 			Bitmap bitmap = BitmapFactory.decodeFile(filepath, options);
 			if (mainImage == null) {
 				try {
@@ -269,7 +280,7 @@ public class ImageEffects {
 							Bitmap.Config.ARGB_8888);
 					canvas = new Canvas(mainImage);
 				} catch (OutOfMemoryError e) {
-					if(downsample < 4){
+					if (downsample < 4) {
 						Log.v(TAG, "compatibility mode: downsample by " + downsample * 2);
 						return createComposition(c, imageFilenpaths, downsample * 2);
 					}
@@ -290,6 +301,19 @@ public class ImageEffects {
 		int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
 		cursor.moveToFirst();
 		return cursor.getString(column_index);
+	}
+	
+	
+
+
+	public static void createCompositionImage(Context context, Composition composition, OnImageSavedListener listener) {
+		ArrayList<String> allFilepaths = composition.getSlicesFilenpaths();
+
+		Bitmap bmpComposition = ImageEffects.createComposition(context, allFilepaths, 1);
+		ImageSaver imageSaver = new ImageSaver(context);
+		imageSaver
+				.saveImageAsync(bmpComposition, "compositions", Static.createCompositionFilename(composition.getParseObjectId()), listener);
+		
 	}
 
 }
