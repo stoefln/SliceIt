@@ -60,20 +60,14 @@ public class CompositionsInProgressFragment extends Fragment {
 		super.onResume();
 		progressDialog.show("Loading photo strips...");
 		//ParseQuery<ParseObject> compositionQuery1 = ParseQuery.getQuery("Composition");
-		ParseQuery<ParseObject> compositionQuery1 = ParseQuery.getQuery("Composition");
-		compositionQuery1.whereEqualTo(Static.FIELD_PLAYER1, ParseUser.getCurrentUser());
-		ParseQuery<ParseObject> compositionQuery2 = ParseQuery.getQuery("Composition");
-		compositionQuery2.whereEqualTo(Static.FIELD_PLAYER2, ParseUser.getCurrentUser());
 		
-		ArrayList<ParseQuery<ParseObject>> queryList = new ArrayList<ParseQuery<ParseObject>>();
-		queryList.add(compositionQuery1);
-		queryList.add(compositionQuery2);
 		
-		ParseQuery<ParseObject> compositionQuery = ParseQuery.or(queryList);
+		ParseQuery<ParseObject> compositionQuery = ParseQuery.getQuery("Composition");
 		compositionQuery.whereLessThan(Static.FIELD_LAST_STEP, Static.MAX_STEP);
 		
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("Slice");
 		query.whereMatchesQuery(Static.FIELD_COMPOSITION, compositionQuery);
+		query.whereEqualTo(Static.FIELD_SEND_TO_USER, ParseUser.getCurrentUser());
 		
 		query.include(Static.FIELD_COMPOSITION);
 		query.include(Static.FIELD_CREATED_BY);

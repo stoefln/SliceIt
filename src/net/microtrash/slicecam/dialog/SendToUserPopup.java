@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.microtrash.slicecam.R;
 import net.microtrash.slicecam.Static;
+import net.microtrash.slicecam.data.Composition;
 import net.microtrash.slicecam.lib.PushService;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
@@ -46,10 +47,13 @@ public class SendToUserPopup extends PopupWindow {
 
 	private ParseObject slice;
 
-	public SendToUserPopup(Context context, View parentView, ParseObject sliceObject, SendToUserPopupListener listener) {
+	private Composition composition;
+
+	public SendToUserPopup(Context context, View parentView, Composition composition, ParseObject sliceObject, SendToUserPopupListener listener) {
 		super(context);
 
 		this.parentView = parentView;
+		this.composition = composition;
 		this.slice = sliceObject;
 		this.listener = listener;
 
@@ -89,7 +93,14 @@ public class SendToUserPopup extends PopupWindow {
 	public void sendToUser(final ParseUser user) {
 		show();
 		String myUsername = ParseUser.getCurrentUser().getUsername();
-
+		ParseObject parseComposition = composition.getParseObject();
+		
+		if (parseComposition.getParseUser(Static.FIELD_PLAYER2) == null
+				&& parseComposition.getParseUser(Static.FIELD_PLAYER1) != user) {
+			parseComposition.put(Static.FIELD_PLAYER2, user);
+			parseComposition.saveInBackground();
+		}
+		
 		updateSlice(slice, user);
 
 		PushService.sendPushMessage(user.getUsername(), myUsername + " sent you a photo slice!", new SendCallback() {
@@ -109,12 +120,7 @@ public class SendToUserPopup extends PopupWindow {
 
 	private void updateSlice(final ParseObject slice, final ParseUser user) {
 		slice.put(Static.FIELD_SEND_TO_USER, user);
-		ParseObject composition = slice.getParseObject(Static.FIELD_COMPOSITION);
-		if (composition.getParseUser(Static.FIELD_PLAYER2) == null
-				&& composition.getParseUser(Static.FIELD_PLAYER1) != user) {
-			composition.put(Static.FIELD_PLAYER2, user);
-			composition.saveInBackground();
-		}
+		
 		slice.saveInBackground(new SaveCallback() {
 
 			@Override

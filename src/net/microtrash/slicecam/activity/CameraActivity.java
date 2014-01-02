@@ -364,7 +364,7 @@ public class CameraActivity extends FragmentActivity implements BitmapDecodingLi
 				Log.v(TAG, "onSliceSaved()");
 
 				final SendToUserPopup sendToUserPopup = new SendToUserPopup(CameraActivity.this,
-						findViewById(R.id.activity_camera), freshSliceObject, CameraActivity.this);
+						findViewById(R.id.activity_camera), currentComposition, freshSliceObject, CameraActivity.this);
 				if(currentComposition.getLastUser() == null){
 					ParseQuery<ParseUser> query = ParseUser.getQuery();
 					query.findInBackground(new FindCallback<ParseUser>() {
