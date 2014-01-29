@@ -13,8 +13,10 @@ import net.microtrash.slicecam.activity.PhotoStripActivity;
 import net.microtrash.slicecam.data.Composition;
 import net.microtrash.slicecam.dialog.ProgressbarPopup;
 import net.microtrash.slicecam.lib.ImageEffects;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -183,8 +185,10 @@ public class CompositionsFinishedFragment extends Fragment implements OnImageSav
 			ImageEffects.createCompositionImage(getActivity(), composition, new OnImageSavedListener() {
 				
 				@Override
-				public void onImageSaved(String lastCompositionPath) {
+				public void onImageSaved(String compositionPath) {
 					adapter.notifyDataSetChanged();
+					// if composition image was created for the first time -> show it
+					startShowImageIntent(compositionPath);
 				}
 			});
 
@@ -195,6 +199,13 @@ public class CompositionsFinishedFragment extends Fragment implements OnImageSav
 	private void log(String string) {
 		Log.v("CompositionFinishedFragment", string);
 
+	}
+	
+	private void startShowImageIntent(String filepath){
+		Intent intent = new Intent();
+		intent.setAction(Intent.ACTION_VIEW);
+		intent.setDataAndType(Uri.parse("file://" +filepath), "image/*");
+		startActivity(intent);
 	}
 
 	public class CompositionAdapter extends BaseAdapter implements OnClickListener {
@@ -256,11 +267,7 @@ public class CompositionsFinishedFragment extends Fragment implements OnImageSav
 
 		@Override
 		public void onClick(View v) {
-			/*String filepath = (String) v.getTag();
-			Intent intent = new Intent();
-			intent.setAction(Intent.ACTION_VIEW);
-			intent.setDataAndType(Uri.parse("file://" +filepath), "image/*");
-			startActivity(intent);*/
+			
 			Composition composition = (Composition) v.getTag();
 			PhotoStripActivity.start(getActivity(), composition.getParseObjectId());
 		}

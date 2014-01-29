@@ -307,13 +307,16 @@ public class ImageEffects {
 
 
 	public static void createCompositionImage(Context context, Composition composition, OnImageSavedListener listener) {
-		ArrayList<String> allFilepaths = composition.getSlicesFilenpaths();
-
-		Bitmap bmpComposition = ImageEffects.createComposition(context, allFilepaths, 1);
-		ImageSaver imageSaver = new ImageSaver(context);
-		imageSaver
-				.saveImageAsync(bmpComposition, "compositions", Static.createCompositionFilename(composition.getParseObjectId()), listener);
-		
+		String filename = Static.createCompositionFilename(composition.getParseObjectId());
+		String filepath = Static.getFullCompositionFilepath(filename);
+		File file = new File(filepath);
+		if(!file.exists()){
+			ArrayList<String> allFilepaths = composition.getSlicesFilenpaths();
+			Bitmap bmpComposition = ImageEffects.createComposition(context, allFilepaths, 1);
+			ImageSaver imageSaver = new ImageSaver(context);
+			imageSaver
+					.saveImageAsync(bmpComposition, "compositions", filename, listener);
+		}
 	}
 
 }
