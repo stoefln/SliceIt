@@ -258,6 +258,7 @@ public class CompositionsFinishedFragment extends Fragment implements OnImageSav
 				BitmapFactory.Options options = new BitmapFactory.Options();
 				Bitmap bmpComposition = BitmapFactory.decodeFile(filepath, options);
 				iv.setImageBitmap(bmpComposition);
+				iv.getLayoutParams().height = listView.getHeight();
 				
 			}
 			iv.setTag(composition);

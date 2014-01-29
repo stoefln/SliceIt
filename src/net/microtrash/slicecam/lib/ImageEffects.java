@@ -287,8 +287,11 @@ public class ImageEffects {
 				}
 			}
 			Log.v(TAG, "imagepath: " + filepath);
-			canvas.drawBitmap(bitmap, matrix, paint);
-			matrix.postTranslate(0, bitmap.getHeight());
+			if(bitmap != null){
+				canvas.drawBitmap(bitmap, matrix, paint);
+				matrix.postTranslate(0, bitmap.getHeight());
+			}
+			
 			bitmap = null;
 			System.gc();
 		}

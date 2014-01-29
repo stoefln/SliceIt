@@ -8,7 +8,7 @@
     <ImageView
         android:id="@+id/item_composition_iv"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent" 
+        android:layout_height="wrap_content" 
         android:src="@drawable/placeholder_16_9"
         android:layout_gravity="center_horizontal"/>
 

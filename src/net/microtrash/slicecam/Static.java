@@ -52,9 +52,9 @@ public class Static {
 		String filepath = Static.getSliceFilpath(filename) + ".jpg";
 		return filepath;
 	}
-	
+
 	public static String getFullCompositionFilepath(String filename) {
-		String filepath = getCompositionFilpath(filename) + Static.IMAGE_FILE_EXTENSION;
+		String filepath = getCompositionFilpath(filename) + "." + Static.IMAGE_FILE_EXTENSION;
 		return filepath;
 	}
 

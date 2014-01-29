@@ -33,15 +33,6 @@ public class DashboardActivity extends FragmentActivity {
 		View v = getLayoutInflater().inflate(R.layout.activity_dashboard, null);
 		setContentView(v);
 
-		Button btnNew = (Button) v.findViewById(R.id.activity_dashboard_btn_new);
-		btnNew.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				CameraActivity.start(null, DashboardActivity.this);
-			}
-		});
-
 		ViewPager pager = (ViewPager) findViewById(R.id.activity_dashboard_vp);
 		pager.setAdapter(new DashboardAdapter(getSupportFragmentManager()));
 

@@ -53,6 +53,14 @@ public class CompositionsInProgressFragment extends Fragment {
 		super.onActivityCreated(savedInstanceState);
 		listView = (ListView) getView().findViewById(R.id.activity_dashboard_lv);
 		progressDialog = new ProgressbarPopup(getActivity(), getView());
+		Button btnNew = (Button) getView().findViewById(R.id.fragment_compositions_in_progress_btn_new);
+		btnNew.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				CameraActivity.start(null, getActivity());
+			}
+		});
 	}
 
 	@Override
