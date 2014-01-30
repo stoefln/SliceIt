@@ -17,7 +17,6 @@ import java.io.Serializable;
 import java.io.StringWriter;
 import java.io.Writer;
 
-
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.MemoryInfo;
@@ -78,6 +77,17 @@ public class Tools {
 	public static String getPreference(String key, String defaultValue, Context context) {
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 		return preferences.getString(key, defaultValue);
+	}
+
+	public static boolean getPreferenceBoolean(String key, Context context) {
+		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+		return preferences.getBoolean(key, false);
+	}
+
+	public static void setPreferenceBoolean(String key, boolean value, Context context) {
+		SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
+		editor.putBoolean(key, value);
+		editor.commit();
 	}
 
 	public static void printFreeRam(String tag, Context c) {

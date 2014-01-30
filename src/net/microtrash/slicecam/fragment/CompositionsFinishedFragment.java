@@ -12,7 +12,7 @@ import net.microtrash.slicecam.Static;
 import net.microtrash.slicecam.activity.PhotoStripActivity;
 import net.microtrash.slicecam.data.Composition;
 import net.microtrash.slicecam.dialog.ProgressbarPopup;
-import net.microtrash.slicecam.lib.ImageEffects;
+import net.microtrash.slicecam.lib.ImageTools;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -182,13 +182,13 @@ public class CompositionsFinishedFragment extends Fragment implements OnImageSav
 
 	private void onAllImagesDownloaded() {
 		for(Composition composition : loadedCompositions){
-			ImageEffects.createCompositionImage(getActivity(), composition, new OnImageSavedListener() {
+			ImageTools.createCompositionImage(getActivity(), composition, new OnImageSavedListener() {
 				
 				@Override
 				public void onImageSaved(String compositionPath) {
 					adapter.notifyDataSetChanged();
 					// if composition image was created for the first time -> show it
-					startShowImageIntent(compositionPath);
+					ImageTools.startShowImageIntent(getActivity(), compositionPath);
 				}
 			});
 
@@ -201,12 +201,7 @@ public class CompositionsFinishedFragment extends Fragment implements OnImageSav
 
 	}
 	
-	private void startShowImageIntent(String filepath){
-		Intent intent = new Intent();
-		intent.setAction(Intent.ACTION_VIEW);
-		intent.setDataAndType(Uri.parse("file://" +filepath), "image/*");
-		startActivity(intent);
-	}
+	
 
 	public class CompositionAdapter extends BaseAdapter implements OnClickListener {
 
@@ -256,6 +251,7 @@ public class CompositionsFinishedFragment extends Fragment implements OnImageSav
 			log("filepath: " + filepath + " exists: " + file.exists());
 			if (file.exists()) {
 				BitmapFactory.Options options = new BitmapFactory.Options();
+				options.inSampleSize = 2;
 				Bitmap bmpComposition = BitmapFactory.decodeFile(filepath, options);
 				iv.setImageBitmap(bmpComposition);
 				iv.getLayoutParams().height = listView.getHeight();

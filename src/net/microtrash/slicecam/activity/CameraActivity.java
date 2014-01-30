@@ -158,9 +158,9 @@ public class CameraActivity extends FragmentActivity implements BitmapDecodingLi
 
 		progressDialog = new ProgressbarPopup(this, shutterLayer);
 		if (getIntent().getExtras() == null) {
-
+			findViewById(R.id.view_slice_av_arrow).setVisibility(View.GONE);
 		} else {
-
+			findViewById(R.id.view_slice_av_arrow).setVisibility(View.VISIBLE);
 			DataAccess.loadCurrentComposition(getIntent().getExtras().getString(Static.EXTRA_COMPOSITION_ID), new OnCompositionLoadedListener() {
 				
 

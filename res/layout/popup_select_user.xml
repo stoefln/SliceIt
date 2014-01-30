@@ -10,6 +10,7 @@
     android:paddingTop="22dp" >
 
     <LinearLayout
+        android:id="@+id/popup_select_user_ll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#333"

@@ -1,16 +1,15 @@
 package net.microtrash.slicecam.lib;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import net.microtrash.slicecam.ImageSaver;
-import net.microtrash.slicecam.Static;
 import net.microtrash.slicecam.ImageSaver.OnImageSavedListener;
+import net.microtrash.slicecam.Static;
 import net.microtrash.slicecam.data.Composition;
-
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -21,7 +20,7 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
 
-public class ImageEffects {
+public class ImageTools {
 
 	private static final String TAG = "ImageEffects";
 
@@ -315,11 +314,25 @@ public class ImageEffects {
 		File file = new File(filepath);
 		if(!file.exists()){
 			ArrayList<String> allFilepaths = composition.getSlicesFilenpaths();
-			Bitmap bmpComposition = ImageEffects.createComposition(context, allFilepaths, 1);
+			Bitmap bmpComposition = ImageTools.createComposition(context, allFilepaths, 1);
 			ImageSaver imageSaver = new ImageSaver(context);
 			imageSaver
 					.saveImageAsync(bmpComposition, "compositions", filename, listener);
 		}
+	}
+
+	public static boolean compositionExists(Composition composition) {
+		String filename = Static.createCompositionFilename(composition.getParseObjectId());
+		String filepath = Static.getFullCompositionFilepath(filename);
+		File file = new File(filepath);
+		return file.exists();
+	}
+	
+	public static void startShowImageIntent(Context context, String filepath){
+		Intent intent = new Intent();
+		intent.setAction(Intent.ACTION_VIEW);
+		intent.setDataAndType(Uri.parse("file://" +filepath), "image/*");
+		context.startActivity(intent);
 	}
 
 }

@@ -412,8 +412,8 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int vpi__tab_unselected_pressed_holo=0x7f02000f;
     }
     public static final class id {
-        public static final int action_logout=0x7f05002f;
-        public static final int action_settings=0x7f05002e;
+        public static final int action_logout=0x7f050030;
+        public static final int action_settings=0x7f05002f;
         public static final int activity_camera=0x7f050006;
         public static final int activity_camera_fv_figure=0x7f05000c;
         public static final int activity_camera_sv=0x7f050009;
@@ -428,9 +428,9 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int bLogin=0x7f050015;
         public static final int bottom=0x7f050003;
         public static final int bt_shoot=0x7f05000e;
-        public static final int dialog_message=0x7f050026;
-        public static final int dialog_send_to_gv=0x7f050027;
-        public static final int dialog_title=0x7f050025;
+        public static final int dialog_message=0x7f050027;
+        public static final int dialog_send_to_gv=0x7f050028;
+        public static final int dialog_title=0x7f050026;
         public static final int fragment_compositions_finished_lv=0x7f05001c;
         public static final int fragment_compositions_in_progress_btn_new=0x7f05001e;
         public static final int header=0x7f050011;
@@ -443,6 +443,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int outline=0x7f05000b;
         public static final int popup_progressbar_iv=0x7f050023;
         public static final int popup_progressbar_tv_label=0x7f050024;
+        public static final int popup_select_user_ll=0x7f050025;
         public static final int preview=0x7f050007;
         public static final int shutter_layer=0x7f05000d;
         public static final int tag_slice=0x7f050005;
@@ -453,13 +454,13 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int triangle=0x7f050001;
         public static final int tvError=0x7f050014;
         public static final int underline=0x7f050002;
-        public static final int view_slice_av_arrow=0x7f05002d;
+        public static final int view_slice_av_arrow=0x7f05002e;
         public static final int view_slice_bt_continue=0x7f050021;
-        public static final int view_slice_iv_slice=0x7f050028;
-        public static final int view_slice_label=0x7f05002a;
-        public static final int view_slice_rl_info=0x7f050029;
-        public static final int view_slice_tv_id=0x7f05002c;
-        public static final int view_slice_tv_username=0x7f05002b;
+        public static final int view_slice_iv_slice=0x7f050029;
+        public static final int view_slice_label=0x7f05002b;
+        public static final int view_slice_rl_info=0x7f05002a;
+        public static final int view_slice_tv_id=0x7f05002d;
+        public static final int view_slice_tv_username=0x7f05002c;
     }
     public static final class integer {
         public static final int default_circle_indicator_orientation=0x7f080000;

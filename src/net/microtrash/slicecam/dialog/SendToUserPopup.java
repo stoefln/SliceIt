@@ -92,6 +92,7 @@ public class SendToUserPopup extends PopupWindow {
 
 	public void sendToUser(final ParseUser user) {
 		show();
+		getContentView().findViewById(R.id.popup_select_user_ll).setVisibility(View.GONE);
 		String myUsername = ParseUser.getCurrentUser().getUsername();
 		ParseObject parseComposition = composition.getParseObject();
 		
